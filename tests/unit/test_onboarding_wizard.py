@@ -1,10 +1,44 @@
 from pathlib import Path
 
-from src.onboarding.wizard import OnboardingAnswers, build_env_map, parse_int_list
+import pytest
+
+from src.onboarding.wizard import (
+    OnboardingAnswers,
+    build_env_map,
+    extract_first_sender,
+    parse_int_list,
+)
 
 
 def test_parse_int_list_from_csv() -> None:
     assert parse_int_list("123, 456,789") == [123, 456, 789]
+
+
+def test_parse_int_list_rejects_non_numeric_values() -> None:
+    with pytest.raises(ValueError):
+        parse_int_list("123,firat")
+
+
+def test_extract_first_sender_prefers_username_when_present() -> None:
+    payload = {
+        "ok": True,
+        "result": [
+            {
+                "update_id": 1,
+                "message": {
+                    "from": {
+                        "id": 123456,
+                        "first_name": "Firat",
+                        "username": "serrrfirat",
+                    }
+                },
+            }
+        ],
+    }
+
+    sender = extract_first_sender(payload)
+
+    assert sender == (123456, "@serrrfirat")
 
 
 def test_build_env_map_contains_required_fields(tmp_path: Path) -> None:
