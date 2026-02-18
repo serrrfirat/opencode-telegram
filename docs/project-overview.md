@@ -1,8 +1,8 @@
-# Claude Code Telegram Bot -- Project Overview
+# OpenCode Telegram Bot -- Project Overview
 
 ## Project Description
 
-A Telegram bot that provides remote access to Claude Code, allowing developers to interact with their projects from anywhere. The default interaction model is **agentic mode** -- a conversational interface where users chat naturally with Claude. A classic terminal-like mode with 13 commands is also available.
+A Telegram bot that provides remote access to OpenCode, allowing developers to interact with their projects from anywhere. The default interaction model is **agentic mode** -- a conversational interface where users chat naturally with the agent. A classic terminal-like mode with 13 commands is also available.
 
 ## Core Objectives
 
@@ -40,8 +40,8 @@ A Telegram bot that provides remote access to Claude Code, allowing developers t
 - **Job Scheduler**: APScheduler cron jobs with persistent storage
 - **Notifications**: Rate-limited Telegram delivery for agent responses
 
-### Claude Code Integration
-- Full Claude Code SDK integration (CLI fallback)
+### OpenCode Integration
+- Full OpenCode SDK integration (CLI fallback compatibility)
 - Session management per user/project
 - Tool usage visibility
 - Cost tracking and limits
@@ -69,7 +69,7 @@ A Telegram bot that provides remote access to Claude Code, allowing developers t
    - User verification, token management, permission checking
    - Input validation and security middleware
 
-4. **Claude Integration** (`src/claude/`)
+4. **Provider Integration** (`src/claude/` + `src/opencode/`)
    - SDK and CLI backends via facade pattern
    - Session state management and auto-resume
 
@@ -79,7 +79,7 @@ A Telegram bot that provides remote access to Claude Code, allowing developers t
 
 6. **Event Bus** (`src/events/`)
    - Async pub/sub with typed subscriptions
-   - AgentHandler bridges events to Claude
+   - AgentHandler bridges events to provider integrations
    - EventSecurityMiddleware validates events
 
 7. **Webhook API** (`src/api/`)

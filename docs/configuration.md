@@ -1,6 +1,6 @@
 # Configuration Guide
 
-This document provides comprehensive information about configuring the Claude Code Telegram Bot.
+This document provides comprehensive information about configuring the OpenCode Telegram Bot.
 
 ## Overview
 
@@ -46,24 +46,28 @@ ENABLE_TOKEN_AUTH=false
 AUTH_TOKEN_SECRET=your-secret-key-here
 ```
 
-#### Claude Configuration
+#### Provider Configuration (OpenCode Default)
 
 ```bash
 # Integration Method
+AGENT_PROVIDER=opencode                # opencode (default) or claude compatibility
 USE_SDK=true                          # Use Python SDK (default) or CLI subprocess
 ANTHROPIC_API_KEY=sk-ant-api03-...    # Optional: API key for SDK integration
 
 # Maximum conversation turns before requiring new session
-CLAUDE_MAX_TURNS=10
+OPENCODE_MAX_TURNS=10
 
-# Timeout for Claude operations in seconds
-CLAUDE_TIMEOUT_SECONDS=300
+# Timeout for provider operations in seconds
+OPENCODE_TIMEOUT_SECONDS=300
 
 # Maximum cost per user in USD
-CLAUDE_MAX_COST_PER_USER=10.0
+OPENCODE_MAX_COST_PER_USER=10.0
 
-# Allowed Claude tools (comma-separated list)
-CLAUDE_ALLOWED_TOOLS=Read,Write,Edit,Bash,Glob,Grep,LS,Task,MultiEdit,NotebookRead,NotebookEdit,WebFetch,TodoRead,TodoWrite,WebSearch
+# Allowed tools (comma-separated list)
+OPENCODE_ALLOWED_TOOLS=Read,Write,Edit,Bash,Glob,Grep,LS,Task,MultiEdit,NotebookRead,NotebookEdit,WebFetch,TodoRead,TodoWrite,WebSearch
+
+# Claude compatibility aliases are still supported during migration
+CLAUDE_TIMEOUT_SECONDS=300
 ```
 
 #### Rate Limiting
@@ -189,7 +193,7 @@ Activated when `ENVIRONMENT=development` or when `DEBUG=true`:
 - `development_mode = true`
 - `log_level = "DEBUG"`
 - `rate_limit_requests = 100` (more lenient)
-- `claude_timeout_seconds = 600` (longer timeout)
+- `opencode_timeout_seconds = 600` (longer timeout)
 - `enable_telemetry = false`
 
 ### Testing Environment
@@ -199,7 +203,7 @@ Activated when `ENVIRONMENT=testing`:
 - `debug = true`
 - `database_url = "sqlite:///:memory:"` (in-memory database)
 - `approved_directory = "/tmp/test_projects"`
-- `claude_timeout_seconds = 30` (faster timeout)
+- `opencode_timeout_seconds = 30` (faster timeout)
 - `rate_limit_requests = 1000` (no effective rate limiting)
 
 ### Production Environment
@@ -209,7 +213,7 @@ Activated when `ENVIRONMENT=production`:
 - `debug = false`
 - `log_level = "INFO"`
 - `enable_telemetry = true`
-- `claude_max_cost_per_user = 5.0` (stricter cost limit)
+- `opencode_max_cost_per_user = 5.0` (stricter cost limit)
 - `rate_limit_requests = 5` (stricter rate limiting)
 - `session_timeout_hours = 12` (shorter session timeout)
 
@@ -266,21 +270,21 @@ The configuration system performs extensive validation:
 - Numeric values must be positive where appropriate
 - User IDs in `ALLOWED_USERS` must be valid integers
 
-## Claude Integration Options
+## Provider Integration Options
 
 ### SDK vs CLI Mode
 
-1. **SDK Mode (Default)**: Uses the Claude Code Python SDK for direct API integration
+1. **SDK Mode (Default)**: Uses the provider SDK for direct integration
    - Better performance and streaming support
-   - Can use existing Claude CLI authentication or API key
+   - Can use existing CLI authentication or API key
 
-2. **CLI Mode**: Uses Claude Code CLI subprocess
-   - Requires Claude Code CLI installation
+2. **CLI Mode**: Uses CLI subprocess integration
+   - Requires a compatible CLI installation
    - Legacy mode for compatibility
 
 ### Authentication Options
 
-#### Option 1: Use Existing Claude CLI Authentication (Recommended)
+#### Option 1: Use Existing CLI Authentication (Recommended)
 ```bash
 USE_SDK=true
 # No ANTHROPIC_API_KEY needed - SDK will use CLI credentials
@@ -295,7 +299,7 @@ ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
 #### Option 3: CLI Mode (Legacy)
 ```bash
 USE_SDK=false
-# Requires Claude CLI to be installed and authenticated
+# Requires CLI to be installed and authenticated
 ```
 
 ## Troubleshooting

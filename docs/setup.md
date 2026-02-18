@@ -7,18 +7,18 @@
 - **Python 3.10+** -- [Download here](https://www.python.org/downloads/)
 - **Poetry** -- Modern Python dependency management
 - **Telegram Bot Token** -- Get one from [@BotFather](https://t.me/botfather)
-- **Claude Authentication** -- Choose one method below
+- **Provider Authentication** -- Choose one method below
 
-### 2. Claude Authentication Setup
+### 2. Provider Authentication Setup
 
-The bot supports two Claude integration modes. Choose the one that fits your needs:
+The bot supports OpenCode by default, with Claude compatibility where needed.
 
 #### Option A: SDK with CLI Authentication (Recommended)
 
-Uses the Python SDK with your existing Claude CLI credentials.
+Uses the Python SDK with your existing CLI credentials.
 
 ```bash
-# 1. Install Claude CLI (https://claude.ai/code)
+# 1. Install a compatible CLI
 # 2. Authenticate
 claude auth login
 
@@ -44,14 +44,15 @@ ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
 
 #### Option C: CLI Subprocess Mode (Legacy)
 
-Uses the Claude CLI as a subprocess. Only use for compatibility with older setups.
+Uses a CLI subprocess. Only use for compatibility with older setups.
 
 ```bash
-# 1. Install and authenticate Claude CLI
+# 1. Install and authenticate CLI
 claude auth login
 
 # 2. Configure bot
-USE_SDK=false
+ USE_SDK=false
+AGENT_PROVIDER=opencode
 ```
 
 ### 3. Install the Bot
@@ -96,7 +97,7 @@ make run          # Production
 
 1. Find your bot on Telegram (search for your bot username)
 2. Send `/start` to begin
-3. Try asking Claude a question about your project
+3. Try asking OpenCode a question about your project
 4. Use `/status` to check session info
 
 ## Agentic Platform Setup
@@ -105,7 +106,7 @@ The bot includes an event-driven platform for webhooks, scheduled jobs, and proa
 
 ### Webhook API Server
 
-Enable to receive external webhooks (GitHub, etc.) and route them through Claude:
+Enable to receive external webhooks (GitHub, etc.) and route them through OpenCode:
 
 ```bash
 ENABLE_API_SERVER=true
@@ -161,7 +162,7 @@ curl -X POST http://localhost:8080/webhooks/custom \
 
 ### Job Scheduler
 
-Enable to run recurring Claude tasks on a cron schedule:
+Enable to run recurring OpenCode tasks on a cron schedule:
 
 ```bash
 ENABLE_SCHEDULER=true
@@ -213,7 +214,7 @@ AUTH_TOKEN_SECRET=your-secret-key-here
 RATE_LIMIT_REQUESTS=10
 RATE_LIMIT_WINDOW=60
 RATE_LIMIT_BURST=20
-CLAUDE_MAX_COST_PER_USER=10.0
+OPENCODE_MAX_COST_PER_USER=10.0
 ```
 
 ### Development Setup

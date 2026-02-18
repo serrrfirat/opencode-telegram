@@ -1,15 +1,15 @@
-# Claude Code Telegram Bot
+# OpenCode Telegram Bot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-A Telegram bot that gives you remote access to [Claude Code](https://claude.ai/code). Chat naturally with Claude about your projects from anywhere -- no terminal commands needed.
+A Telegram bot that gives you remote access to OpenCode. Chat naturally with your coding agent about projects from anywhere -- no terminal commands needed.
 
 ## What is this?
 
-This bot connects Telegram to Claude Code, providing a conversational AI interface for your codebase:
+This bot connects Telegram to OpenCode, providing a conversational AI interface for your codebase:
 
-- **Chat naturally** -- ask Claude to analyze, edit, or explain your code in plain language
+- **Chat naturally** -- ask OpenCode to analyze, edit, or explain your code in plain language
 - **Maintain context** across conversations with automatic session persistence per project
 - **Code on the go** from any device with Telegram
 - **Receive proactive notifications** from webhooks, scheduled jobs, and CI/CD events
@@ -23,7 +23,7 @@ This bot connects Telegram to Claude Code, providing a conversational AI interfa
 You: Can you help me add error handling to src/api.py?
 
 Bot: I'll analyze src/api.py and add error handling...
-     [Claude reads your code, suggests improvements, and can apply changes directly]
+     [OpenCode reads your code, suggests improvements, and can apply changes directly]
 
 You: Looks good. Now run the tests to make sure nothing broke.
 
@@ -35,7 +35,7 @@ Bot: Running pytest...
 
 - **Python 3.10+** -- [Download here](https://www.python.org/downloads/)
 - **Poetry** -- Modern Python dependency management
-- **Claude Code CLI** -- [Install from here](https://claude.ai/code)
+- **OpenCode CLI** (or Claude CLI compatibility mode)
 - **Telegram Bot Token** -- Get one from [@BotFather](https://t.me/botfather)
 
 ### 2. Install
@@ -70,7 +70,7 @@ make run-debug    # With debug logging
 
 Message your bot on Telegram to get started.
 
-> **Detailed setup:** See [docs/setup.md](docs/setup.md) for Claude authentication options and troubleshooting.
+> **Detailed setup:** See [docs/setup.md](docs/setup.md) for provider configuration and troubleshooting.
 
 ## Modes
 
@@ -78,16 +78,16 @@ The bot supports two interaction modes:
 
 ### Agentic Mode (Default)
 
-The default conversational mode. Just talk to Claude naturally -- no special commands required.
+The default conversational mode. Just talk naturally -- no special commands required.
 
 **Commands:** `/start`, `/new`, `/status`
 
 ```
 You: What files are in this project?
-Bot: [Claude explores the directory and describes the project structure]
+Bot: [OpenCode explores the directory and describes the project structure]
 
 You: Add a retry decorator to the HTTP client
-Bot: [Claude reads the code, writes the decorator, and updates the imports]
+Bot: [OpenCode reads the code, writes the decorator, and updates the imports]
 
 You: /new
 Bot: Session cleared. Send a message to start fresh.
@@ -114,8 +114,8 @@ Bot: [Run Tests] [Install Deps] [Format Code] [Run Linter]
 
 Beyond direct chat, the bot can respond to external triggers:
 
-- **Webhooks** -- Receive GitHub events (push, PR, issues) and route them through Claude for automated summaries or code review
-- **Scheduler** -- Run recurring Claude tasks on a cron schedule (e.g., daily code health checks)
+- **Webhooks** -- Receive GitHub events (push, PR, issues) and route them through OpenCode for automated summaries or code review
+- **Scheduler** -- Run recurring OpenCode tasks on a cron schedule (e.g., daily code health checks)
 - **Notifications** -- Deliver agent responses to configured Telegram chats
 
 Enable with `ENABLE_API_SERVER=true` and `ENABLE_SCHEDULER=true`. See [docs/setup.md](docs/setup.md) for configuration.
@@ -126,7 +126,7 @@ Enable with `ENABLE_API_SERVER=true` and `ENABLE_SCHEDULER=true`. See [docs/setu
 
 - Conversational agentic mode (default) with natural language interaction
 - Classic terminal-like mode with 13 commands and inline keyboards
-- Full Claude Code integration with SDK (primary) and CLI (fallback)
+- Full OpenCode integration with SDK (primary) and CLI-compatible fallback
 - Automatic session persistence per user/project directory
 - Multi-layer authentication (whitelist + optional token-based)
 - Rate limiting with token bucket algorithm
@@ -163,9 +163,14 @@ ALLOWED_USERS=123456789          # Comma-separated Telegram user IDs
 ### Common Options
 
 ```bash
-# Claude
+# Provider (OpenCode default)
+AGENT_PROVIDER=opencode          # opencode (default) or claude compatibility
 USE_SDK=true                     # Python SDK (default) or CLI subprocess
 ANTHROPIC_API_KEY=sk-ant-...     # API key (optional if using CLI auth)
+OPENCODE_TIMEOUT_SECONDS=300     # OpenCode operation timeout
+OPENCODE_MAX_COST_PER_USER=10.0  # Spending limit per user (USD)
+
+# Claude compatibility aliases
 CLAUDE_MAX_COST_PER_USER=10.0    # Spending limit per user (USD)
 CLAUDE_TIMEOUT_SECONDS=300       # Operation timeout
 
@@ -211,13 +216,13 @@ Message [@userinfobot](https://t.me/userinfobot) on Telegram -- it will reply wi
 **Bot doesn't respond:**
 - Check your `TELEGRAM_BOT_TOKEN` is correct
 - Verify your user ID is in `ALLOWED_USERS`
-- Ensure Claude Code CLI is installed and accessible
+- Ensure provider CLI/auth is installed and accessible
 - Check bot logs with `make run-debug`
 
-**Claude integration not working:**
-- SDK mode (default): Check `claude auth status` or verify `ANTHROPIC_API_KEY`
+**Provider integration not working:**
+- SDK mode (default): Verify `ANTHROPIC_API_KEY` and provider access
 - CLI mode: Verify `claude --version` and `claude auth status`
-- Check `CLAUDE_ALLOWED_TOOLS` includes necessary tools
+- Check `OPENCODE_ALLOWED_TOOLS` (or `CLAUDE_ALLOWED_TOOLS`) includes necessary tools
 
 **High usage costs:**
 - Adjust `CLAUDE_MAX_COST_PER_USER` to set spending limits
@@ -262,5 +267,5 @@ MIT License -- see [LICENSE](LICENSE).
 
 ## Acknowledgments
 
-- [Claude](https://claude.ai) by Anthropic
+- OpenCode and Claude tooling ecosystem
 - [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)

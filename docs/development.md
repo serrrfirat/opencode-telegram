@@ -1,6 +1,6 @@
 # Development Guide
 
-This document provides detailed information for developers working on the Claude Code Telegram Bot.
+This document provides detailed information for developers working on the OpenCode Telegram Bot.
 
 ## Getting Started
 
@@ -9,8 +9,8 @@ This document provides detailed information for developers working on the Claude
 - Python 3.9 or higher
 - Poetry for dependency management
 - Git for version control
-- Claude authentication (one of):
-  - Claude Code CLI installed and authenticated
+- Provider authentication (one of):
+  - OpenCode/Claude compatible CLI installed and authenticated
   - Anthropic API key for direct SDK usage
 
 ### Initial Setup
@@ -18,7 +18,7 @@ This document provides detailed information for developers working on the Claude
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd claude-code-telegram
+   cd opencode-telegram
    ```
 
 2. **Install Poetry** (if not already installed):
@@ -98,14 +98,15 @@ src/
 │   ├── handlers/     # Command and message handlers
 │   ├── middleware/   # Authentication and rate limiting
 │   └── utils/        # Response formatting utilities
-├── claude/           # Claude Code integration (✅ Complete)
+├── claude/           # Claude compatibility integration (✅ Complete)
+├── opencode/         # OpenCode provider wrappers
 │   ├── __init__.py
 │   ├── integration.py # Subprocess management
 │   ├── parser.py     # Output parsing and formatting
 │   ├── session.py    # Session management
 │   ├── monitor.py    # Tool usage monitoring
 │   ├── facade.py     # High-level integration API
-│   └── exceptions.py # Claude-specific exceptions
+│   └── exceptions.py # Provider-specific exceptions
 ├── storage/          # Database and persistence (✅ Complete)
 │   ├── __init__.py
 │   ├── database.py   # Database connection and migrations
