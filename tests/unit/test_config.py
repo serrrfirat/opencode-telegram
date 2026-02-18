@@ -43,6 +43,28 @@ def test_settings_with_valid_data(tmp_path):
     assert settings.telegram_token_str == "test_token"
     assert settings.telegram_bot_username == "test_bot"
     assert settings.approved_directory == test_dir
+    assert settings.agent_provider == "opencode"
+
+
+def test_settings_provider_compatibility_shims(tmp_path):
+    """Claude/OpenCode settings stay synchronized during migration."""
+    from_defaults = Settings(
+        telegram_bot_token="test_token",
+        telegram_bot_username="test_bot",
+        approved_directory=str(tmp_path),
+        claude_timeout_seconds=123,
+    )
+
+    assert from_defaults.opencode_timeout_seconds == 123
+
+    from_opencode = Settings(
+        telegram_bot_token="test_token",
+        telegram_bot_username="test_bot",
+        approved_directory=str(tmp_path),
+        opencode_timeout_seconds=321,
+    )
+
+    assert from_opencode.claude_timeout_seconds == 321
 
 
 def test_allowed_users_parsing():
@@ -206,7 +228,10 @@ def test_mcp_config_validation(tmp_path, monkeypatch):
     # Should succeed with valid MCP config
     config_file = tmp_path / "mcp_config.json"
     config_file.write_text(
-        '{"mcpServers": {"my-server": {"command": "npx", "args": ["-y", "my-mcp-server"]}}}'
+        "{"
+        '"mcpServers": {"my-server": {"command": "npx", '
+        '"args": ["-y", "my-mcp-server"]}}'
+        "}"
     )
 
     settings = Settings(
