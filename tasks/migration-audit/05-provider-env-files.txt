@@ -1,0 +1,9 @@
+./.env.example
+./CLAUDE.md
+./README.md
+./docs/configuration.md
+./docs/development.md
+./docs/setup.md
+./src/claude/sdk_integration.py
+./tasks/migration-audit/01-claude-footprint.txt
+./tests/unit/test_claude/test_sdk_integration.py

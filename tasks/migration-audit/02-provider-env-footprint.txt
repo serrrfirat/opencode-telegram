@@ -1,0 +1,46 @@
+./src/claude/sdk_integration.py:149:            os.environ["ANTHROPIC_API_KEY"] = config.anthropic_api_key_str
+./CLAUDE.md:94:Settings loaded from environment variables via Pydantic Settings. Required: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `APPROVED_DIRECTORY`. Key optional: `ALLOWED_USERS` (comma-separated Telegram IDs), `USE_SDK` (default true), `ANTHROPIC_API_KEY`, `ENABLE_MCP`, `MCP_CONFIG_PATH`.
+./.env.example:18:# 3. Set USE_SDK=true (leave ANTHROPIC_API_KEY empty)
+./.env.example:22:# 2. Set USE_SDK=true and ANTHROPIC_API_KEY=your-key
+./.env.example:56:ANTHROPIC_API_KEY=
+./README.md:168:ANTHROPIC_API_KEY=sk-ant-...     # API key (optional if using CLI auth)
+./README.md:218:- SDK mode (default): Check `claude auth status` or verify `ANTHROPIC_API_KEY`
+./docs/development.md:339:# ANTHROPIC_API_KEY=sk-ant-api03-your-development-key
+./docs/configuration.md:54:ANTHROPIC_API_KEY=sk-ant-api03-...    # Optional: API key for SDK integration
+./docs/configuration.md:286:# No ANTHROPIC_API_KEY needed - SDK will use CLI credentials
+./docs/configuration.md:292:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./docs/setup.md:31:# Leave ANTHROPIC_API_KEY empty
+./docs/setup.md:42:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./docs/setup.md:253:echo $ANTHROPIC_API_KEY
+./tests/unit/test_claude/test_sdk_integration.py:77:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tests/unit/test_claude/test_sdk_integration.py:83:            assert os.environ.get("ANTHROPIC_API_KEY") == "test-api-key"
+./tests/unit/test_claude/test_sdk_integration.py:89:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tests/unit/test_claude/test_sdk_integration.py:90:            elif "ANTHROPIC_API_KEY" in os.environ:
+./tests/unit/test_claude/test_sdk_integration.py:91:                del os.environ["ANTHROPIC_API_KEY"]
+./tests/unit/test_claude/test_sdk_integration.py:96:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tests/unit/test_claude/test_sdk_integration.py:100:            if "ANTHROPIC_API_KEY" in os.environ:
+./tests/unit/test_claude/test_sdk_integration.py:101:                del os.environ["ANTHROPIC_API_KEY"]
+./tests/unit/test_claude/test_sdk_integration.py:112:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tasks/migration-audit/01-claude-footprint.txt:232:./src/claude/sdk_integration.py:149:            os.environ["ANTHROPIC_API_KEY"] = config.anthropic_api_key_str
+./tasks/migration-audit/01-claude-footprint.txt:252:./.env.example:18:# 3. Set USE_SDK=true (leave ANTHROPIC_API_KEY empty)
+./tasks/migration-audit/01-claude-footprint.txt:254:./.env.example:22:# 2. Set USE_SDK=true and ANTHROPIC_API_KEY=your-key
+./tasks/migration-audit/01-claude-footprint.txt:257:./.env.example:56:ANTHROPIC_API_KEY=
+./tasks/migration-audit/01-claude-footprint.txt:331:./README.md:168:ANTHROPIC_API_KEY=sk-ant-...     # API key (optional if using CLI auth)
+./tasks/migration-audit/01-claude-footprint.txt:334:./README.md:218:- SDK mode (default): Check `claude auth status` or verify `ANTHROPIC_API_KEY`
+./tasks/migration-audit/01-claude-footprint.txt:403:./docs/development.md:339:# ANTHROPIC_API_KEY=sk-ant-api03-your-development-key
+./tasks/migration-audit/01-claude-footprint.txt:432:./CLAUDE.md:94:Settings loaded from environment variables via Pydantic Settings. Required: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `APPROVED_DIRECTORY`. Key optional: `ALLOWED_USERS` (comma-separated Telegram IDs), `USE_SDK` (default true), `ANTHROPIC_API_KEY`, `ENABLE_MCP`, `MCP_CONFIG_PATH`.
+./tasks/migration-audit/01-claude-footprint.txt:480:./docs/setup.md:31:# Leave ANTHROPIC_API_KEY empty
+./tasks/migration-audit/01-claude-footprint.txt:482:./docs/setup.md:42:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./tasks/migration-audit/01-claude-footprint.txt:490:./docs/setup.md:253:echo $ANTHROPIC_API_KEY
+./tasks/migration-audit/01-claude-footprint.txt:513:./tests/unit/test_claude/test_sdk_integration.py:77:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tasks/migration-audit/01-claude-footprint.txt:514:./tests/unit/test_claude/test_sdk_integration.py:83:            assert os.environ.get("ANTHROPIC_API_KEY") == "test-api-key"
+./tasks/migration-audit/01-claude-footprint.txt:515:./tests/unit/test_claude/test_sdk_integration.py:89:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tasks/migration-audit/01-claude-footprint.txt:516:./tests/unit/test_claude/test_sdk_integration.py:90:            elif "ANTHROPIC_API_KEY" in os.environ:
+./tasks/migration-audit/01-claude-footprint.txt:517:./tests/unit/test_claude/test_sdk_integration.py:91:                del os.environ["ANTHROPIC_API_KEY"]
+./tasks/migration-audit/01-claude-footprint.txt:518:./tests/unit/test_claude/test_sdk_integration.py:96:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tasks/migration-audit/01-claude-footprint.txt:519:./tests/unit/test_claude/test_sdk_integration.py:100:            if "ANTHROPIC_API_KEY" in os.environ:
+./tasks/migration-audit/01-claude-footprint.txt:520:./tests/unit/test_claude/test_sdk_integration.py:101:                del os.environ["ANTHROPIC_API_KEY"]
+./tasks/migration-audit/01-claude-footprint.txt:522:./tests/unit/test_claude/test_sdk_integration.py:112:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tasks/migration-audit/01-claude-footprint.txt:538:./docs/configuration.md:54:ANTHROPIC_API_KEY=sk-ant-api03-...    # Optional: API key for SDK integration
+./tasks/migration-audit/01-claude-footprint.txt:546:./docs/configuration.md:286:# No ANTHROPIC_API_KEY needed - SDK will use CLI credentials
+./tasks/migration-audit/01-claude-footprint.txt:547:./docs/configuration.md:292:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here

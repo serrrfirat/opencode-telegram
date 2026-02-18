@@ -1,0 +1,20 @@
+poetry.lock:47:name = "anthropic"
+poetry.lock:49:description = "The official Python library for the anthropic API"
+poetry.lock:54:    {file = "anthropic-0.40.0-py3-none-any.whl", hash = "sha256:442028ae8790ff9e3b6f8912043918755af1230d193904ae2ef78cc22995280c"},
+poetry.lock:55:    {file = "anthropic-0.40.0.tar.gz", hash = "sha256:3efeca6d9e97813f93ed34322c6c7ea2279bf0824cd0aa71b59ce222665e2b87"},
+poetry.lock:292:name = "claude-agent-sdk"
+poetry.lock:294:description = "Python SDK for Claude Code"
+poetry.lock:299:    {file = "claude_agent_sdk-0.1.31-py3-none-macosx_11_0_arm64.whl", hash = "sha256:801bacfe4192782a7cc7b61b0d23a57f061c069993dd3dfa8109aa2e7050a530"},
+poetry.lock:300:    {file = "claude_agent_sdk-0.1.31-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:0b608e0cbfcedcb827427e6d16a73fe573d58e7f93e15f95435066feacbe6511"},
+poetry.lock:301:    {file = "claude_agent_sdk-0.1.31-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:d0cb30e026a22246e84d9237d23bb4df20be5146913a04d2802ddd37d4f8b8c9"},
+poetry.lock:302:    {file = "claude_agent_sdk-0.1.31-py3-none-win_amd64.whl", hash = "sha256:8ceca675c2770ad739bd1208362059a830e91c74efcf128045b5a7af14d36f2b"},
+poetry.lock:303:    {file = "claude_agent_sdk-0.1.31.tar.gz", hash = "sha256:b68c681083d7cc985dd3e48f73aabf459f056c1a7e1c5b9c47033c6af94da1a1"},
+pyproject.toml:2:name = "claude-code-telegram"
+pyproject.toml:4:description = "Telegram bot for remote Claude Code access with comprehensive configuration management"
+pyproject.toml:8:homepage = "https://github.com/richardatkinson/claude-code-telegram"
+pyproject.toml:9:repository = "https://github.com/richardatkinson/claude-code-telegram"
+pyproject.toml:10:documentation = "https://github.com/richardatkinson/claude-code-telegram/blob/main/docs/"
+pyproject.toml:11:keywords = ["telegram", "bot", "claude", "ai", "development", "remote", "coding"]
+pyproject.toml:36:anthropic = "^0.40.0"
+pyproject.toml:37:claude-agent-sdk = "^0.1.30"
+pyproject.toml:43:claude-telegram-bot = "src.main:run"

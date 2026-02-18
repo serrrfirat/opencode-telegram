@@ -1,0 +1,554 @@
+./src/main.py:15:from src.claude import (
+./src/main.py:21:from src.claude.sdk_integration import ClaudeSDKManager
+./src/main.py:153:    claude_integration = ClaudeIntegration(
+./src/main.py:175:        claude_integration=claude_integration,
+./src/main.py:187:        "claude_integration": claude_integration,
+./src/main.py:202:        "claude_integration": claude_integration,
+./src/main.py:217:    claude_integration: ClaudeIntegration = app["claude_integration"]
+./src/main.py:316:        # Ordered shutdown: scheduler -> API -> notification -> bot -> claude -> storage
+./src/main.py:326:            await claude_integration.shutdown()
+./src/events/handlers.py:12:from ..claude.facade import ClaudeIntegration
+./src/events/handlers.py:30:        claude_integration: ClaudeIntegration,
+./src/events/handlers.py:35:        self.claude = claude_integration
+./src/events/handlers.py:59:            response = await self.claude.run_command(
+./src/events/handlers.py:104:            response = await self.claude.run_command(
+./src/bot/handlers/message.py:10:from ...claude.exceptions import ClaudeToolValidationError
+./src/bot/handlers/message.py:25:        if update_obj.metadata and update_obj.metadata.get("tool_use_id"):
+./src/bot/handlers/message.py:175:        claude_integration = context.bot_data.get("claude_integration")
+./src/bot/handlers/message.py:178:        if not claude_integration:
+./src/bot/handlers/message.py:193:        session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/message.py:206:            claude_response = await claude_integration.run_command(
+./src/bot/handlers/message.py:215:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/handlers/message.py:218:            _update_working_directory_from_claude_response(
+./src/bot/handlers/message.py:219:                claude_response, context, settings, user_id
+./src/bot/handlers/message.py:225:                    await storage.save_claude_interaction(
+./src/bot/handlers/message.py:227:                        session_id=claude_response.session_id,
+./src/bot/handlers/message.py:229:                        response=claude_response,
+./src/bot/handlers/message.py:239:            formatted_messages = formatter.format_claude_response(
+./src/bot/handlers/message.py:240:                claude_response.content
+./src/bot/handlers/message.py:312:        if conversation_enhancer and claude_response:
+./src/bot/handlers/message.py:316:                    session_id=claude_response.session_id,
+./src/bot/handlers/message.py:319:                    tools_used=claude_response.tools_used or [],
+./src/bot/handlers/message.py:320:                    response_content=claude_response.content,
+./src/bot/handlers/message.py:325:                    claude_response.tools_used or [], claude_response.content
+./src/bot/handlers/message.py:329:                        claude_response.content,
+./src/bot/handlers/message.py:330:                        claude_response.tools_used or [],
+./src/bot/handlers/message.py:519:        claude_progress_msg = await update.message.reply_text(
+./src/bot/handlers/message.py:524:        claude_integration = context.bot_data.get("claude_integration")
+./src/bot/handlers/message.py:526:        if not claude_integration:
+./src/bot/handlers/message.py:527:            await claude_progress_msg.edit_text(
+./src/bot/handlers/message.py:538:        session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/message.py:542:            claude_response = await claude_integration.run_command(
+./src/bot/handlers/message.py:550:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/handlers/message.py:553:            _update_working_directory_from_claude_response(
+./src/bot/handlers/message.py:554:                claude_response, context, settings, user_id
+./src/bot/handlers/message.py:561:            formatted_messages = formatter.format_claude_response(
+./src/bot/handlers/message.py:562:                claude_response.content
+./src/bot/handlers/message.py:566:            await claude_progress_msg.delete()
+./src/bot/handlers/message.py:581:            await claude_progress_msg.edit_text(
+./src/bot/handlers/message.py:646:            claude_progress_msg = await update.message.reply_text(
+./src/bot/handlers/message.py:651:            claude_integration = context.bot_data.get("claude_integration")
+./src/bot/handlers/message.py:653:            if not claude_integration:
+./src/bot/handlers/message.py:654:                await claude_progress_msg.edit_text(
+./src/bot/handlers/message.py:665:            session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/message.py:669:                claude_response = await claude_integration.run_command(
+./src/bot/handlers/message.py:677:                context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/handlers/message.py:683:                formatted_messages = formatter.format_claude_response(
+./src/bot/handlers/message.py:684:                    claude_response.content
+./src/bot/handlers/message.py:688:                await claude_progress_msg.delete()
+./src/bot/handlers/message.py:705:                await claude_progress_msg.edit_text(
+./src/bot/handlers/message.py:849:def _update_working_directory_from_claude_response(
+./src/bot/handlers/message.py:850:    claude_response, context, settings, user_id
+./src/bot/handlers/message.py:865:    content = claude_response.content.lower()
+./src/bot/handlers/command.py:7:from ...claude.facade import ClaudeIntegration
+./src/bot/handlers/command.py:125:    old_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/command.py:128:    context.user_data["claude_session_id"] = None
+./src/bot/handlers/command.py:169:    claude_integration: ClaudeIntegration = context.bot_data.get("claude_integration")
+./src/bot/handlers/command.py:182:        if not claude_integration:
+./src/bot/handlers/command.py:190:        claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/command.py:192:        if claude_session_id:
+./src/bot/handlers/command.py:196:                f"Session ID: <code>{claude_session_id[:8]}...</code>\n"
+./src/bot/handlers/command.py:204:            claude_response = await claude_integration.run_command(
+./src/bot/handlers/command.py:208:                session_id=claude_session_id,
+./src/bot/handlers/command.py:219:            claude_response = await claude_integration.continue_session(
+./src/bot/handlers/command.py:225:        if claude_response:
+./src/bot/handlers/command.py:227:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/handlers/command.py:236:            formatted_messages = formatter.format_claude_response(
+./src/bot/handlers/command.py:237:                claude_response.content
+./src/bot/handlers/command.py:484:        claude_integration: ClaudeIntegration = context.bot_data.get(
+./src/bot/handlers/command.py:485:            "claude_integration"
+./src/bot/handlers/command.py:488:        if claude_integration:
+./src/bot/handlers/command.py:489:            existing_session = await claude_integration._find_resumable_session(
+./src/bot/handlers/command.py:493:                context.user_data["claude_session_id"] = existing_session.session_id
+./src/bot/handlers/command.py:500:                context.user_data["claude_session_id"] = None
+./src/bot/handlers/command.py:625:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/command.py:639:            cost_limit = cost_usage.get("limit", settings.claude_max_cost_per_user)
+./src/bot/handlers/command.py:648:    if not claude_session_id:
+./src/bot/handlers/command.py:649:        claude_integration: ClaudeIntegration = context.bot_data.get(
+./src/bot/handlers/command.py:650:            "claude_integration"
+./src/bot/handlers/command.py:652:        if claude_integration:
+./src/bot/handlers/command.py:653:            existing = await claude_integration._find_resumable_session(
+./src/bot/handlers/command.py:667:        f"🤖 Claude Session: {'✅ Active' if claude_session_id else '❌ None'}",
+./src/bot/handlers/command.py:672:    if claude_session_id:
+./src/bot/handlers/command.py:673:        status_lines.append(f"🆔 Session ID: <code>{claude_session_id[:8]}...</code>")
+./src/bot/handlers/command.py:680:    if claude_session_id:
+./src/bot/handlers/command.py:733:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/command.py:735:    if not claude_session_id:
+./src/bot/handlers/command.py:761:        f"Ready to export session: <code>{claude_session_id[:8]}...</code>\n\n"
+./src/bot/handlers/command.py:774:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/command.py:776:    if not claude_session_id:
+./src/bot/handlers/command.py:794:    context.user_data["claude_session_id"] = None
+./src/bot/handlers/command.py:828:    logger.info("Session ended by user", user_id=user_id, session_id=claude_session_id)
+./src/bot/handlers/callback.py:7:from ...claude.facade import ClaudeIntegration
+./src/bot/handlers/callback.py:133:        context.user_data["claude_session_id"] = None
+./src/bot/handlers/callback.py:334:    context.user_data["claude_session_id"] = None
+./src/bot/handlers/callback.py:374:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/callback.py:376:    if not claude_session_id:
+./src/bot/handlers/callback.py:405:    context.user_data["claude_session_id"] = None
+./src/bot/handlers/callback.py:444:    claude_integration: ClaudeIntegration = context.bot_data.get("claude_integration")
+./src/bot/handlers/callback.py:451:        if not claude_integration:
+./src/bot/handlers/callback.py:460:        claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/callback.py:462:        if claude_session_id:
+./src/bot/handlers/callback.py:466:                f"Session ID: <code>{escape_html(claude_session_id[:8])}...</code>\n"
+./src/bot/handlers/callback.py:472:            claude_response = await claude_integration.run_command(
+./src/bot/handlers/callback.py:476:                session_id=claude_session_id,
+./src/bot/handlers/callback.py:486:            claude_response = await claude_integration.continue_session(
+./src/bot/handlers/callback.py:492:        if claude_response:
+./src/bot/handlers/callback.py:494:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/handlers/callback.py:499:                f"{escape_html(claude_response.content[:500])}{'...' if len(claude_response.content) > 500 else ''}",
+./src/bot/handlers/callback.py:552:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/callback.py:566:            cost_limit = cost_usage.get("limit", settings.claude_max_cost_per_user)
+./src/bot/handlers/callback.py:577:        f"🤖 Claude Session: {'✅ Active' if claude_session_id else '❌ None'}",
+./src/bot/handlers/callback.py:581:    if claude_session_id:
+./src/bot/handlers/callback.py:583:            f"🆔 Session ID: <code>{escape_html(claude_session_id[:8])}...</code>"
+./src/bot/handlers/callback.py:588:    if claude_session_id:
+./src/bot/handlers/callback.py:797:    claude_integration: ClaudeIntegration = context.bot_data.get("claude_integration")
+./src/bot/handlers/callback.py:798:    if not claude_integration:
+./src/bot/handlers/callback.py:831:        claude_response = await claude_integration.run_command(
+./src/bot/handlers/callback.py:835:        if claude_response:
+./src/bot/handlers/callback.py:837:            response_text = escape_html(claude_response.content)
+./src/bot/handlers/callback.py:944:        context.user_data["claude_session_id"] = None
+./src/bot/handlers/callback.py:1153:    claude_session_id = context.user_data.get("claude_session_id")
+./src/bot/handlers/callback.py:1154:    if not claude_session_id:
+./src/bot/handlers/callback.py:1171:            claude_session_id, export_format
+./src/bot/orchestrator.py:22:from ..claude.exceptions import ClaudeToolValidationError
+./src/bot/orchestrator.py:193:        context.user_data["claude_session_id"] = None
+./src/bot/orchestrator.py:207:        session_id = context.user_data.get("claude_session_id")
+./src/bot/orchestrator.py:251:        claude_integration = context.bot_data.get("claude_integration")
+./src/bot/orchestrator.py:252:        if not claude_integration:
+./src/bot/orchestrator.py:261:        session_id = context.user_data.get("claude_session_id")
+./src/bot/orchestrator.py:265:            claude_response = await claude_integration.run_command(
+./src/bot/orchestrator.py:272:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/orchestrator.py:275:            from .handlers.message import _update_working_directory_from_claude_response
+./src/bot/orchestrator.py:277:            _update_working_directory_from_claude_response(
+./src/bot/orchestrator.py:278:                claude_response, context, self.settings, user_id
+./src/bot/orchestrator.py:285:                    await storage.save_claude_interaction(
+./src/bot/orchestrator.py:287:                        session_id=claude_response.session_id,
+./src/bot/orchestrator.py:289:                        response=claude_response,
+./src/bot/orchestrator.py:299:            formatted_messages = formatter.format_claude_response(
+./src/bot/orchestrator.py:300:                claude_response.content
+./src/bot/orchestrator.py:430:        claude_integration = context.bot_data.get("claude_integration")
+./src/bot/orchestrator.py:431:        if not claude_integration:
+./src/bot/orchestrator.py:440:        session_id = context.user_data.get("claude_session_id")
+./src/bot/orchestrator.py:443:            claude_response = await claude_integration.run_command(
+./src/bot/orchestrator.py:449:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/orchestrator.py:451:            from .handlers.message import _update_working_directory_from_claude_response
+./src/bot/orchestrator.py:453:            _update_working_directory_from_claude_response(
+./src/bot/orchestrator.py:454:                claude_response, context, self.settings, user_id
+./src/bot/orchestrator.py:460:            formatted_messages = formatter.format_claude_response(
+./src/bot/orchestrator.py:461:                claude_response.content
+./src/bot/orchestrator.py:505:            claude_integration = context.bot_data.get("claude_integration")
+./src/bot/orchestrator.py:506:            if not claude_integration:
+./src/bot/orchestrator.py:515:            session_id = context.user_data.get("claude_session_id")
+./src/bot/orchestrator.py:517:            claude_response = await claude_integration.run_command(
+./src/bot/orchestrator.py:523:            context.user_data["claude_session_id"] = claude_response.session_id
+./src/bot/orchestrator.py:528:            formatted_messages = formatter.format_claude_response(
+./src/bot/orchestrator.py:529:                claude_response.content
+./src/bot/utils/formatting.py:35:    def format_claude_response(
+./src/bot/features/session_export.py:241:        .message.claude {{
+./src/bot/features/conversation_mode.py:22:    enhancer.update_context(user_id, claude_response)
+./src/bot/features/conversation_mode.py:33:from ...claude.integration import ClaudeResponse
+./src/bot/features/file_handler.py:53:        self.temp_dir = Path("/tmp/claude_bot_files")
+./src/storage/session_storage.py:12:from ..claude.session import ClaudeSession, SessionStorage
+./src/storage/session_storage.py:137:            claude_session = ClaudeSession(
+./src/storage/session_storage.py:152:                user_id=claude_session.user_id,
+./src/storage/session_storage.py:155:            return claude_session
+./src/storage/session_storage.py:184:                claude_session = ClaudeSession(
+./src/storage/session_storage.py:195:                sessions.append(claude_session)
+./src/storage/session_storage.py:210:                claude_session = ClaudeSession(
+./src/storage/session_storage.py:221:                sessions.append(claude_session)
+./src/storage/facade.py:11:from ..claude.integration import ClaudeResponse
+./src/storage/facade.py:64:    async def save_claude_interaction(
+./src/storage/facade.py:134:            event_type="claude_interaction",
+./src/utils/constants.py:8:DEFAULT_CLAUDE_TIMEOUT_SECONDS = 300
+./src/utils/constants.py:9:DEFAULT_CLAUDE_MAX_TURNS = 10
+./src/utils/constants.py:10:DEFAULT_CLAUDE_MAX_COST_PER_USER = 10.0
+./src/utils/constants.py:83:DEFAULT_CLAUDE_BINARY = "claude"
+./src/utils/constants.py:84:DEFAULT_CLAUDE_OUTPUT_FORMAT = "stream-json"
+./src/__init__.py:26:__homepage__ = "https://github.com/richardatkinson/claude-code-telegram"
+./src/claude/parser.py:80:                if block.get("type") != "tool_use":
+./src/claude/parser.py:121:                if block.get("type") != "tool_use":
+./src/claude/parser.py:167:                        "tool_use_id": msg.get("tool_use_id"),
+./src/claude/parser.py:201:                            "tool_use_id": msg.get("tool_use_id"),
+./src/claude/parser.py:238:                    elif block.get("type") == "tool_use":
+./src/claude/integration.py:137:                timeout=self.config.claude_timeout_seconds,
+./src/claude/integration.py:158:                timeout_seconds=self.config.claude_timeout_seconds,
+./src/claude/integration.py:162:                f"Claude Code timed out after {self.config.claude_timeout_seconds}s"
+./src/claude/integration.py:182:        cmd = [self.config.claude_binary_path or "claude"]
+./src/claude/integration.py:206:        cmd.extend(["--max-turns", str(self.config.claude_max_turns)])
+./src/claude/integration.py:210:            hasattr(self.config, "claude_allowed_tools")
+./src/claude/integration.py:211:            and self.config.claude_allowed_tools
+./src/claude/integration.py:213:            cmd.extend(["--allowedTools", ",".join(self.config.claude_allowed_tools)])
+./src/claude/integration.py:400:            elif block.get("type") == "tool_use":
+./src/claude/integration.py:427:                "tool_use_id": msg.get("tool_use_id"),
+./src/claude/integration.py:538:                    if block.get("type") == "tool_use":
+./src/claude/sdk_integration.py:18:from claude_agent_sdk import (
+./src/claude/sdk_integration.py:46:def find_claude_cli(claude_cli_path: Optional[str] = None) -> Optional[str]:
+./src/claude/sdk_integration.py:52:    if claude_cli_path:
+./src/claude/sdk_integration.py:53:        if os.path.exists(claude_cli_path) and os.access(claude_cli_path, os.X_OK):
+./src/claude/sdk_integration.py:54:            return claude_cli_path
+./src/claude/sdk_integration.py:56:    # Check CLAUDE_CLI_PATH environment variable
+./src/claude/sdk_integration.py:57:    env_path = os.environ.get("CLAUDE_CLI_PATH")
+./src/claude/sdk_integration.py:61:    # Check if claude is already in PATH
+./src/claude/sdk_integration.py:62:    claude_path = shutil.which("claude")
+./src/claude/sdk_integration.py:63:    if claude_path:
+./src/claude/sdk_integration.py:64:        return claude_path
+./src/claude/sdk_integration.py:69:        os.path.expanduser("~/.nvm/versions/node/*/bin/claude"),
+./src/claude/sdk_integration.py:71:        os.path.expanduser("~/.npm-global/bin/claude"),
+./src/claude/sdk_integration.py:72:        os.path.expanduser("~/node_modules/.bin/claude"),
+./src/claude/sdk_integration.py:74:        "/usr/local/bin/claude",
+./src/claude/sdk_integration.py:75:        "/usr/bin/claude",
+./src/claude/sdk_integration.py:77:        os.path.expanduser("~/AppData/Roaming/npm/claude.cmd"),
+./src/claude/sdk_integration.py:89:def update_path_for_claude(claude_cli_path: Optional[str] = None) -> bool:
+./src/claude/sdk_integration.py:91:    claude_path = find_claude_cli(claude_cli_path)
+./src/claude/sdk_integration.py:93:    if claude_path:
+./src/claude/sdk_integration.py:94:        # Add the directory containing claude to PATH
+./src/claude/sdk_integration.py:95:        claude_dir = os.path.dirname(claude_path)
+./src/claude/sdk_integration.py:98:        if claude_dir not in current_path:
+./src/claude/sdk_integration.py:99:            os.environ["PATH"] = f"{claude_dir}:{current_path}"
+./src/claude/sdk_integration.py:100:            logger.info("Updated PATH for Claude CLI", claude_path=claude_path)
+./src/claude/sdk_integration.py:140:        if not update_path_for_claude(config.claude_cli_path):
+./src/claude/sdk_integration.py:148:        if config.anthropic_api_key_str:
+./src/claude/sdk_integration.py:149:            os.environ["ANTHROPIC_API_KEY"] = config.anthropic_api_key_str
+./src/claude/sdk_integration.py:174:            cli_path = find_claude_cli(self.config.claude_cli_path)
+./src/claude/sdk_integration.py:176:                max_turns=self.config.claude_max_turns,
+./src/claude/sdk_integration.py:178:                allowed_tools=self.config.claude_allowed_tools,
+./src/claude/sdk_integration.py:208:                timeout=self.config.claude_timeout_seconds,
+./src/claude/sdk_integration.py:214:            claude_session_id = None
+./src/claude/sdk_integration.py:218:                    claude_session_id = getattr(message, "session_id", None)
+./src/claude/sdk_integration.py:226:            final_session_id = claude_session_id or session_id or str(uuid.uuid4())
+./src/claude/sdk_integration.py:228:            if claude_session_id and claude_session_id != session_id:
+./src/claude/sdk_integration.py:231:                    claude_session_id=claude_session_id,
+./src/claude/sdk_integration.py:256:                timeout_seconds=self.config.claude_timeout_seconds,
+./src/claude/sdk_integration.py:259:                f"Claude SDK timed out after {self.config.claude_timeout_seconds}s"
+./src/claude/sdk_integration.py:266:                "  npm install -g @anthropic-ai/claude-code\n\n"
+./src/claude/sdk_integration.py:269:                "  2. Create a symlink: ln -s $(which claude) /usr/local/bin/claude\n"
+./src/claude/sdk_integration.py:270:                "  3. Set CLAUDE_CLI_PATH environment variable"
+./src/claude/sdk_integration.py:378:        """Handle streaming message from claude-agent-sdk."""
+./src/claude/sdk_integration.py:404:                # Note: This depends on the actual claude-agent-sdk message structure
+./src/claude/sdk_integration.py:462:        The new claude-agent-sdk expects mcp_servers as a dict, not a file path.
+./.env.example:16:# 1. Install Claude CLI: https://claude.ai/code
+./.env.example:17:# 2. Login: claude auth login
+./.env.example:18:# 3. Set USE_SDK=true (leave ANTHROPIC_API_KEY empty)
+./.env.example:21:# 1. Get API key from: https://console.anthropic.com/
+./.env.example:22:# 2. Set USE_SDK=true and ANTHROPIC_API_KEY=your-key
+./.env.example:50:# === CLAUDE SETTINGS ===
+./.env.example:55:# Get your API key from: https://console.anthropic.com/
+./.env.example:56:ANTHROPIC_API_KEY=
+./.env.example:59:# Example: /usr/local/bin/claude or ~/.nvm/versions/node/v20.19.2/bin/claude
+./.env.example:60:CLAUDE_CLI_PATH=
+./.env.example:63:CLAUDE_MAX_TURNS=10
+./.env.example:66:CLAUDE_TIMEOUT_SECONDS=300
+./.env.example:69:CLAUDE_MAX_COST_PER_USER=10.0
+./.env.example:72:CLAUDE_ALLOWED_TOOLS=Read,Write,Edit,Bash,Glob,Grep,LS,Task,MultiEdit,NotebookRead,NotebookEdit,WebFetch,TodoRead,TodoWrite,WebSearch
+./SYSTEMD_SETUP.md:13:nano ~/.config/systemd/user/claude-telegram-bot.service
+./SYSTEMD_SETUP.md:25:WorkingDirectory=/home/ubuntu/Code/oss/claude-code-telegram
+./SYSTEMD_SETUP.md:26:ExecStart=/home/ubuntu/.local/bin/poetry run claude-telegram-bot
+./SYSTEMD_SETUP.md:48:systemctl --user enable claude-telegram-bot.service
+./SYSTEMD_SETUP.md:51:systemctl --user start claude-telegram-bot.service
+./SYSTEMD_SETUP.md:57:systemctl --user status claude-telegram-bot
+./SYSTEMD_SETUP.md:66:journalctl --user -u claude-telegram-bot -n 50 | grep -i "environment\|development"
+./SYSTEMD_SETUP.md:73:journalctl --user -u claude-telegram-bot -n 50 | grep -i "auth"
+./SYSTEMD_SETUP.md:86:systemctl --user start claude-telegram-bot
+./SYSTEMD_SETUP.md:89:systemctl --user stop claude-telegram-bot
+./SYSTEMD_SETUP.md:92:systemctl --user restart claude-telegram-bot
+./SYSTEMD_SETUP.md:95:systemctl --user status claude-telegram-bot
+./SYSTEMD_SETUP.md:98:journalctl --user -u claude-telegram-bot -f
+./SYSTEMD_SETUP.md:101:journalctl --user -u claude-telegram-bot -n 50
+./SYSTEMD_SETUP.md:104:systemctl --user disable claude-telegram-bot
+./SYSTEMD_SETUP.md:107:systemctl --user enable claude-telegram-bot
+./SYSTEMD_SETUP.md:116:systemctl --user restart claude-telegram-bot
+./SYSTEMD_SETUP.md:124:journalctl --user -u claude-telegram-bot -n 100
+./SYSTEMD_SETUP.md:127:systemctl --user cat claude-telegram-bot
+./SYSTEMD_SETUP.md:133:cd /home/ubuntu/Code/oss/claude-code-telegram
+./SYSTEMD_SETUP.md:134:poetry run claude-telegram-bot
+./SYSTEMD_SETUP.md:146:- Service file: `~/.config/systemd/user/claude-telegram-bot.service`
+./SYSTEMD_SETUP.md:147:- Logs: View with `journalctl --user -u claude-telegram-bot`
+./SYSTEMD_SETUP.md:148:- Project: `/home/ubuntu/Code/oss/claude-code-telegram`
+./src/security/rate_limiter.py:87:            max_cost_per_user=self.config.claude_max_cost_per_user,
+./src/security/rate_limiter.py:153:        if current_cost + cost > self.config.claude_max_cost_per_user:
+./src/security/rate_limiter.py:154:            remaining = max(0, self.config.claude_max_cost_per_user - current_cost)
+./src/security/rate_limiter.py:158:                f"${self.config.claude_max_cost_per_user:.2f}"
+./src/security/rate_limiter.py:239:        cost_remaining = max(0, self.config.claude_max_cost_per_user - current_cost)
+./src/security/rate_limiter.py:245:                "limit": self.config.claude_max_cost_per_user,
+./src/security/rate_limiter.py:247:                "utilization": current_cost / self.config.claude_max_cost_per_user,
+./src/security/rate_limiter.py:263:                "max_cost_per_user": self.config.claude_max_cost_per_user,
+./.github/workflows/claude.yml:14:  claude:
+./.github/workflows/claude.yml:16:      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+./.github/workflows/claude.yml:17:      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+./.github/workflows/claude.yml:18:      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+./.github/workflows/claude.yml:19:      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+./.github/workflows/claude.yml:34:        id: claude
+./.github/workflows/claude.yml:35:        uses: anthropics/claude-code-action@v1
+./.github/workflows/claude.yml:37:          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+./.github/workflows/claude.yml:46:          # Optional: Add claude_args to customize behavior and configuration
+./.github/workflows/claude.yml:47:          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+./.github/workflows/claude.yml:48:          # or https://code.claude.com/docs/en/cli-reference for available options
+./.github/workflows/claude.yml:49:          # claude_args: '--allowed-tools Bash(gh pr:*)'
+./tasks/migration-audit/00-recent-commits.txt:6:dd9eb89 Merge pull request #20 from RichardAtCT/add-claude-github-actions-1770985637138
+./tasks/migration-audit/00-recent-commits.txt:10:0283c6f Add CLAUDE.md for Claude Code guidance
+./tasks/migration-audit/00-recent-commits.txt:16:4669f89 Merge pull request #19 from RichardAtCT/claude/migrate-agent-sdk-Dm1FR
+./tasks/migration-audit/00-recent-commits.txt:17:00ee57c Migrate from deprecated claude-code-sdk to claude-agent-sdk
+./tasks/migration-audit/00-recent-commits.txt:18:030aa47 Merge pull request #18 from RichardAtCT/claude/diagnose-mcp-issues-KDpVo
+./tasks/migration-audit/00-recent-commits.txt:21:44a669b Merge pull request #16 from RichardAtCT/claude/maintain-session-context-nPhTV
+./src/claude/monitor.py:50:            hasattr(self.config, "claude_allowed_tools")
+./src/claude/monitor.py:51:            and self.config.claude_allowed_tools
+./src/claude/monitor.py:53:            if tool_name not in self.config.claude_allowed_tools:
+./src/claude/monitor.py:66:            hasattr(self.config, "claude_disallowed_tools")
+./src/claude/monitor.py:67:            and self.config.claude_disallowed_tools
+./src/claude/monitor.py:69:            if tool_name in self.config.claude_disallowed_tools:
+./src/claude/monitor.py:189:            hasattr(self.config, "claude_allowed_tools")
+./src/claude/monitor.py:190:            and self.config.claude_allowed_tools
+./src/claude/monitor.py:192:            if tool_name not in self.config.claude_allowed_tools:
+./src/claude/monitor.py:197:            hasattr(self.config, "claude_disallowed_tools")
+./src/claude/monitor.py:198:            and self.config.claude_disallowed_tools
+./src/claude/monitor.py:200:            if tool_name in self.config.claude_disallowed_tools:
+./README.md:6:A Telegram bot that gives you remote access to [Claude Code](https://claude.ai/code). Chat naturally with Claude about your projects from anywhere -- no terminal commands needed.
+./README.md:38:- **Claude Code CLI** -- [Install from here](https://claude.ai/code)
+./README.md:44:git clone https://github.com/RichardAtCT/claude-code-telegram.git
+./README.md:45:cd claude-code-telegram
+./README.md:59:TELEGRAM_BOT_USERNAME=my_claude_bot
+./README.md:168:ANTHROPIC_API_KEY=sk-ant-...     # API key (optional if using CLI auth)
+./README.md:169:CLAUDE_MAX_COST_PER_USER=10.0    # Spending limit per user (USD)
+./README.md:170:CLAUDE_TIMEOUT_SECONDS=300       # Operation timeout
+./README.md:218:- SDK mode (default): Check `claude auth status` or verify `ANTHROPIC_API_KEY`
+./README.md:219:- CLI mode: Verify `claude --version` and `claude auth status`
+./README.md:220:- Check `CLAUDE_ALLOWED_TOOLS` includes necessary tools
+./README.md:223:- Adjust `CLAUDE_MAX_COST_PER_USER` to set spending limits
+./README.md:265:- [Claude](https://claude.ai) by Anthropic
+./Makefile:41:	poetry run claude-telegram-bot
+./Makefile:45:	poetry run claude-telegram-bot --debug
+./.github/workflows/claude-code-review.yml:14:  claude-review:
+./.github/workflows/claude-code-review.yml:35:        id: claude-review
+./.github/workflows/claude-code-review.yml:36:        uses: anthropics/claude-code-action@v1
+./.github/workflows/claude-code-review.yml:38:          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+./.github/workflows/claude-code-review.yml:39:          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+./.github/workflows/claude-code-review.yml:40:          plugins: 'code-review@claude-code-plugins'
+./.github/workflows/claude-code-review.yml:42:          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+./.github/workflows/claude-code-review.yml:43:          # or https://code.claude.com/docs/en/cli-reference for available options
+./CONTRIBUTING.md:27:   git clone https://github.com/your-username/claude-code-telegram.git
+./CONTRIBUTING.md:28:   cd claude-code-telegram
+./CONTRIBUTING.md:65:   ├── claude/     # Claude integration (✅ Complete - TODO-5)
+./pyproject.toml:2:name = "claude-code-telegram"
+./pyproject.toml:8:homepage = "https://github.com/richardatkinson/claude-code-telegram"
+./pyproject.toml:9:repository = "https://github.com/richardatkinson/claude-code-telegram"
+./pyproject.toml:10:documentation = "https://github.com/richardatkinson/claude-code-telegram/blob/main/docs/"
+./pyproject.toml:11:keywords = ["telegram", "bot", "claude", "ai", "development", "remote", "coding"]
+./pyproject.toml:36:anthropic = "^0.40.0"
+./pyproject.toml:37:claude-agent-sdk = "^0.1.30"
+./pyproject.toml:43:claude-telegram-bot = "src.main:run"
+./src/config/loader.py:136:    if settings.claude_timeout_seconds <= 0:
+./src/config/loader.py:137:        raise InvalidConfigError("claude_timeout_seconds must be positive")
+./src/config/loader.py:140:    if settings.claude_max_cost_per_user <= 0:
+./src/config/loader.py:141:        raise InvalidConfigError("claude_max_cost_per_user must be positive")
+./src/config/settings.py:19:    DEFAULT_CLAUDE_MAX_COST_PER_USER,
+./src/config/settings.py:20:    DEFAULT_CLAUDE_MAX_TURNS,
+./src/config/settings.py:21:    DEFAULT_CLAUDE_TIMEOUT_SECONDS,
+./src/config/settings.py:53:    claude_binary_path: Optional[str] = Field(
+./src/config/settings.py:56:    claude_cli_path: Optional[str] = Field(
+./src/config/settings.py:59:    anthropic_api_key: Optional[SecretStr] = Field(
+./src/config/settings.py:63:    claude_model: str = Field(
+./src/config/settings.py:64:        "claude-3-5-sonnet-20241022", description="Claude model to use"
+./src/config/settings.py:66:    claude_max_turns: int = Field(
+./src/config/settings.py:67:        DEFAULT_CLAUDE_MAX_TURNS, description="Max conversation turns"
+./src/config/settings.py:69:    claude_timeout_seconds: int = Field(
+./src/config/settings.py:70:        DEFAULT_CLAUDE_TIMEOUT_SECONDS, description="Claude timeout"
+./src/config/settings.py:72:    claude_max_cost_per_user: float = Field(
+./src/config/settings.py:73:        DEFAULT_CLAUDE_MAX_COST_PER_USER, description="Max cost per user"
+./src/config/settings.py:76:    claude_allowed_tools: Optional[List[str]] = Field(
+./src/config/settings.py:96:    claude_disallowed_tools: Optional[List[str]] = Field(
+./src/config/settings.py:188:    @field_validator("claude_allowed_tools", mode="before")
+./src/config/settings.py:190:    def parse_claude_allowed_tools(cls, v: Any) -> Optional[List[str]]:
+./src/config/settings.py:297:    def anthropic_api_key_str(self) -> Optional[str]:
+./src/config/settings.py:300:            self.anthropic_api_key.get_secret_value()
+./src/config/settings.py:301:            if self.anthropic_api_key
+./src/claude/facade.py:130:                                self.config.claude_allowed_tools or [],
+./src/claude/facade.py:137:                                allowed_tools=self.config.claude_allowed_tools or [],
+./src/claude/facade.py:155:            claude_session_id = session.session_id if has_real_session else None
+./src/claude/facade.py:161:                    session_id=claude_session_id,
+./src/claude/facade.py:174:                        failed_session_id=claude_session_id,
+./src/claude/facade.py:223:                        f"{', '.join(f'`{t}`' for t in self.config.claude_allowed_tools or [])}"
+./src/claude/facade.py:510:                instructions.append(f'CLAUDE_ALLOWED_TOOLS="{merged_tools_str}"')
+./src/claude/facade.py:517:                instructions.append(f'CLAUDE_ALLOWED_TOOLS="{merged_tools_str}"')
+./src/claude/facade.py:523:            instructions.append("claude_allowed_tools: Optional[List[str]] = Field(")
+./src/config/environments.py:13:    claude_timeout_seconds: int = 600  # Longer timeout for debugging
+./src/config/environments.py:36:    claude_timeout_seconds: int = 30  # Faster timeout for tests
+./src/config/environments.py:60:    claude_max_cost_per_user: float = 5.0  # Lower cost limit
+./SECURITY.md:99:CLAUDE_MAX_COST_PER_USER=5.0
+./docs/development.md:21:   cd claude-code-telegram
+./docs/development.md:101:├── claude/           # Claude Code integration (✅ Complete)
+./docs/development.md:137:│   ├── test_claude/  # Claude integration tests
+./docs/development.md:224:        claude_max_turns=5
+./docs/development.md:229:    assert config.claude_max_turns == 5
+./docs/development.md:339:# ANTHROPIC_API_KEY=sk-ant-api03-your-development-key
+./docs/development.md:455:   env | grep CLAUDE
+./tests/unit/test_events/test_handlers.py:20:def mock_claude() -> AsyncMock:
+./tests/unit/test_events/test_handlers.py:27:def agent_handler(event_bus: EventBus, mock_claude: AsyncMock) -> AgentHandler:
+./tests/unit/test_events/test_handlers.py:30:        claude_integration=mock_claude,
+./tests/unit/test_events/test_handlers.py:41:    async def test_webhook_event_triggers_claude(
+./tests/unit/test_events/test_handlers.py:42:        self, event_bus: EventBus, mock_claude: AsyncMock, agent_handler: AgentHandler
+./tests/unit/test_events/test_handlers.py:47:        mock_claude.run_command.return_value = mock_response
+./tests/unit/test_events/test_handlers.py:67:        mock_claude.run_command.assert_called_once()
+./tests/unit/test_events/test_handlers.py:68:        call_kwargs = mock_claude.run_command.call_args
+./tests/unit/test_events/test_handlers.py:76:    async def test_scheduled_event_triggers_claude(
+./tests/unit/test_events/test_handlers.py:77:        self, event_bus: EventBus, mock_claude: AsyncMock, agent_handler: AgentHandler
+./tests/unit/test_events/test_handlers.py:82:        mock_claude.run_command.return_value = mock_response
+./tests/unit/test_events/test_handlers.py:101:        mock_claude.run_command.assert_called_once()
+./tests/unit/test_events/test_handlers.py:102:        assert "standup" in mock_claude.run_command.call_args.kwargs["prompt"].lower()
+./tests/unit/test_events/test_handlers.py:109:        self, event_bus: EventBus, mock_claude: AsyncMock, agent_handler: AgentHandler
+./tests/unit/test_events/test_handlers.py:114:        mock_claude.run_command.return_value = mock_response
+./tests/unit/test_events/test_handlers.py:125:        prompt = mock_claude.run_command.call_args.kwargs["prompt"]
+./tests/unit/test_events/test_handlers.py:129:    async def test_claude_error_does_not_propagate(
+./tests/unit/test_events/test_handlers.py:130:        self, event_bus: EventBus, mock_claude: AsyncMock, agent_handler: AgentHandler
+./tests/unit/test_events/test_handlers.py:133:        mock_claude.run_command.side_effect = RuntimeError("SDK error")
+./CLAUDE.md:1:# CLAUDE.md
+./CLAUDE.md:3:This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+./CLAUDE.md:7:Telegram bot providing remote access to Claude Code. Python 3.10+, built with Poetry, using `python-telegram-bot` for Telegram and `claude-agent-sdk` for Claude Code integration.
+./CLAUDE.md:31:`ClaudeIntegration` (facade in `src/claude/facade.py`) wraps two backends:
+./CLAUDE.md:32:- **`ClaudeSDKManager`** (`src/claude/sdk_integration.py`) -- Primary. Uses `claude-agent-sdk` async `query()` with streaming. Session IDs come from Claude's `ResultMessage`, not generated locally.
+./CLAUDE.md:33:- **`ClaudeProcessManager`** (`src/claude/integration.py`) -- Legacy CLI subprocess fallback. Used when SDK fails with JSON decode or TaskGroup errors.
+./CLAUDE.md:64:context.bot_data["claude_integration"]
+./CLAUDE.md:76:- `src/claude/` -- Claude integration facade, SDK/CLI managers, session management, tool monitoring
+./CLAUDE.md:94:Settings loaded from environment variables via Pydantic Settings. Required: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `APPROVED_DIRECTORY`. Key optional: `ALLOWED_USERS` (comma-separated Telegram IDs), `USE_SDK` (default true), `ANTHROPIC_API_KEY`, `ENABLE_MCP`, `MCP_CONFIG_PATH`.
+./tests/unit/test_orchestrator.py:32:        "claude_integration": MagicMock(),
+./tests/unit/test_orchestrator.py:167:    context.user_data = {"claude_session_id": "old-session-123"}
+./tests/unit/test_orchestrator.py:171:    assert context.user_data["claude_session_id"] is None
+./tests/unit/test_orchestrator.py:194:async def test_agentic_text_calls_claude(agentic_settings, deps):
+./tests/unit/test_orchestrator.py:204:    claude_integration = AsyncMock()
+./tests/unit/test_orchestrator.py:205:    claude_integration.run_command = AsyncMock(return_value=mock_response)
+./tests/unit/test_orchestrator.py:223:        "claude_integration": claude_integration,
+./tests/unit/test_orchestrator.py:232:    claude_integration.run_command.assert_called_once()
+./tests/unit/test_orchestrator.py:235:    assert context.user_data["claude_session_id"] == "session-abc"
+./tests/unit/test_orchestrator.py:316:    claude_integration = AsyncMock()
+./tests/unit/test_orchestrator.py:317:    claude_integration.run_command = AsyncMock(side_effect=Exception("Claude broke"))
+./tests/unit/test_orchestrator.py:337:        "claude_integration": claude_integration,
+./tests/unit/test_config.py:362:        claude_max_turns=5,
+./tests/unit/test_config.py:366:    assert config.claude_max_turns == 5
+./tests/unit/test_bot/test_formatting.py:60:        messages = formatter.format_claude_response(text)
+./tests/unit/test_bot/test_formatting.py:69:        messages = formatter.format_claude_response(text)
+./tests/unit/test_bot/test_formatting.py:83:        messages = formatter.format_claude_response(long_text)
+./tests/unit/test_bot/test_formatting.py:191:        messages = formatter.format_claude_response(text)
+./tests/unit/test_storage/test_facade.py:9:from src.claude.integration import ClaudeResponse
+./tests/unit/test_storage/test_facade.py:62:    async def test_save_claude_interaction(self, storage):
+./tests/unit/test_storage/test_facade.py:65:        user = await storage.get_or_create_user(12347, "claudeuser")
+./tests/unit/test_storage/test_facade.py:66:        session = await storage.create_session(12347, "/test/claude", "claude-session")
+./tests/unit/test_storage/test_facade.py:69:        claude_response = ClaudeResponse(
+./tests/unit/test_storage/test_facade.py:71:            session_id="claude-session",
+./tests/unit/test_storage/test_facade.py:79:        await storage.save_claude_interaction(
+./tests/unit/test_storage/test_facade.py:81:            session_id="claude-session",
+./tests/unit/test_storage/test_facade.py:83:            response=claude_response,
+./tests/unit/test_storage/test_facade.py:88:        messages = await storage.messages.get_session_messages("claude-session")
+./tests/unit/test_storage/test_facade.py:95:        tool_usage = await storage.tools.get_session_tool_usage("claude-session")
+./tests/unit/test_storage/test_facade.py:105:        updated_session = await storage.sessions.get_session("claude-session")
+./tests/unit/test_storage/test_facade.py:135:            claude_response = ClaudeResponse(
+./tests/unit/test_storage/test_facade.py:143:            await storage.save_claude_interaction(
+./tests/unit/test_storage/test_facade.py:147:                response=claude_response,
+./tests/unit/test_storage/test_facade.py:170:            claude_response = ClaudeResponse(
+./tests/unit/test_storage/test_facade.py:179:            await storage.save_claude_interaction(
+./tests/unit/test_storage/test_facade.py:183:                response=claude_response,
+./tests/unit/test_storage/test_facade.py:247:        claude_response = ClaudeResponse(
+./tests/unit/test_storage/test_facade.py:255:        await storage.save_claude_interaction(
+./tests/unit/test_storage/test_facade.py:259:            response=claude_response,
+./tests/unit/test_storage/test_facade.py:276:        claude_response = ClaudeResponse(
+./tests/unit/test_storage/test_facade.py:284:        await storage.save_claude_interaction(
+./tests/unit/test_storage/test_facade.py:288:            response=claude_response,
+./tests/unit/test_environments.py:26:    assert config_dict["claude_timeout_seconds"] == 30
+./tests/unit/test_environments.py:38:    assert config_dict["claude_max_cost_per_user"] == 5.0
+./docs/setup.md:21:# 1. Install Claude CLI (https://claude.ai/code)
+./docs/setup.md:23:claude auth login
+./docs/setup.md:26:claude auth status
+./docs/setup.md:31:# Leave ANTHROPIC_API_KEY empty
+./docs/setup.md:39:# 1. Get your API key from https://console.anthropic.com/
+./docs/setup.md:42:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./docs/setup.md:51:claude auth login
+./docs/setup.md:60:git clone https://github.com/RichardAtCT/claude-code-telegram.git
+./docs/setup.md:61:cd claude-code-telegram
+./docs/setup.md:216:CLAUDE_MAX_COST_PER_USER=10.0
+./docs/setup.md:227:CLAUDE_TIMEOUT_SECONDS=600
+./docs/setup.md:246:claude auth status
+./docs/setup.md:247:# If not authenticated: claude auth login
+./docs/setup.md:253:echo $ANTHROPIC_API_KEY
+./docs/setup.md:269:CLAUDE_MAX_COST_PER_USER=5.0
+./docs/setup.md:279:- **Issues**: [Open an issue](https://github.com/RichardAtCT/claude-code-telegram/issues)
+./tests/unit/test_claude/test_session.py:8:from src.claude.sdk_integration import ClaudeResponse
+./tests/unit/test_claude/test_session.py:9:from src.claude.session import ClaudeSession, InMemorySessionStorage, SessionManager
+./tests/unit/test_security/test_rate_limiter.py:92:            claude_max_cost_per_user=5.0,
+./tests/unit/test_security/test_rate_limiter.py:229:            == rate_limiter.config.claude_max_cost_per_user
+./poetry.lock:47:name = "anthropic"
+./poetry.lock:49:description = "The official Python library for the anthropic API"
+./poetry.lock:54:    {file = "anthropic-0.40.0-py3-none-any.whl", hash = "sha256:442028ae8790ff9e3b6f8912043918755af1230d193904ae2ef78cc22995280c"},
+./poetry.lock:55:    {file = "anthropic-0.40.0.tar.gz", hash = "sha256:3efeca6d9e97813f93ed34322c6c7ea2279bf0824cd0aa71b59ce222665e2b87"},
+./poetry.lock:292:name = "claude-agent-sdk"
+./poetry.lock:299:    {file = "claude_agent_sdk-0.1.31-py3-none-macosx_11_0_arm64.whl", hash = "sha256:801bacfe4192782a7cc7b61b0d23a57f061c069993dd3dfa8109aa2e7050a530"},
+./poetry.lock:300:    {file = "claude_agent_sdk-0.1.31-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:0b608e0cbfcedcb827427e6d16a73fe573d58e7f93e15f95435066feacbe6511"},
+./poetry.lock:301:    {file = "claude_agent_sdk-0.1.31-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:d0cb30e026a22246e84d9237d23bb4df20be5146913a04d2802ddd37d4f8b8c9"},
+./poetry.lock:302:    {file = "claude_agent_sdk-0.1.31-py3-none-win_amd64.whl", hash = "sha256:8ceca675c2770ad739bd1208362059a830e91c74efcf128045b5a7af14d36f2b"},
+./poetry.lock:303:    {file = "claude_agent_sdk-0.1.31.tar.gz", hash = "sha256:b68c681083d7cc985dd3e48f73aabf459f056c1a7e1c5b9c47033c6af94da1a1"},
+./tests/unit/test_claude/test_sdk_integration.py:8:from claude_agent_sdk import (
+./tests/unit/test_claude/test_sdk_integration.py:15:from src.claude.sdk_integration import ClaudeResponse, ClaudeSDKManager, StreamUpdate
+./tests/unit/test_claude/test_sdk_integration.py:23:        model="claude-sonnet-4-20250514",
+./tests/unit/test_claude/test_sdk_integration.py:54:            claude_timeout_seconds=2,  # Short timeout for testing
+./tests/unit/test_claude/test_sdk_integration.py:71:            anthropic_api_key="test-api-key",
+./tests/unit/test_claude/test_sdk_integration.py:73:            claude_timeout_seconds=2,
+./tests/unit/test_claude/test_sdk_integration.py:77:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tests/unit/test_claude/test_sdk_integration.py:83:            assert os.environ.get("ANTHROPIC_API_KEY") == "test-api-key"
+./tests/unit/test_claude/test_sdk_integration.py:89:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tests/unit/test_claude/test_sdk_integration.py:90:            elif "ANTHROPIC_API_KEY" in os.environ:
+./tests/unit/test_claude/test_sdk_integration.py:91:                del os.environ["ANTHROPIC_API_KEY"]
+./tests/unit/test_claude/test_sdk_integration.py:96:        original_api_key = os.environ.get("ANTHROPIC_API_KEY")
+./tests/unit/test_claude/test_sdk_integration.py:100:            if "ANTHROPIC_API_KEY" in os.environ:
+./tests/unit/test_claude/test_sdk_integration.py:101:                del os.environ["ANTHROPIC_API_KEY"]
+./tests/unit/test_claude/test_sdk_integration.py:106:            assert config.anthropic_api_key_str is None
+./tests/unit/test_claude/test_sdk_integration.py:112:                os.environ["ANTHROPIC_API_KEY"] = original_api_key
+./tests/unit/test_claude/test_sdk_integration.py:121:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./tests/unit/test_claude/test_sdk_integration.py:146:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./tests/unit/test_claude/test_sdk_integration.py:166:        from src.claude.exceptions import ClaudeTimeoutError
+./tests/unit/test_claude/test_sdk_integration.py:168:        with patch("src.claude.sdk_integration.query", side_effect=mock_hanging_query):
+./tests/unit/test_claude/test_sdk_integration.py:225:            claude_timeout_seconds=2,
+./tests/unit/test_claude/test_sdk_integration.py:239:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./tests/unit/test_claude/test_sdk_integration.py:260:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./tests/unit/test_claude/test_sdk_integration.py:282:            claude_timeout_seconds=2,
+./tests/unit/test_claude/test_sdk_integration.py:292:        from claude_agent_sdk import CLIConnectionError
+./tests/unit/test_claude/test_sdk_integration.py:294:        from src.claude.exceptions import ClaudeMCPError
+./tests/unit/test_claude/test_sdk_integration.py:300:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./tests/unit/test_claude/test_sdk_integration.py:311:        from claude_agent_sdk import ProcessError
+./tests/unit/test_claude/test_sdk_integration.py:313:        from src.claude.exceptions import ClaudeMCPError
+./tests/unit/test_claude/test_sdk_integration.py:319:        with patch("src.claude.sdk_integration.query", side_effect=mock_query):
+./docs/project-overview.md:72:4. **Claude Integration** (`src/claude/`)
+./docs/configuration.md:54:ANTHROPIC_API_KEY=sk-ant-api03-...    # Optional: API key for SDK integration
+./docs/configuration.md:57:CLAUDE_MAX_TURNS=10
+./docs/configuration.md:60:CLAUDE_TIMEOUT_SECONDS=300
+./docs/configuration.md:63:CLAUDE_MAX_COST_PER_USER=10.0
+./docs/configuration.md:66:CLAUDE_ALLOWED_TOOLS=Read,Write,Edit,Bash,Glob,Grep,LS,Task,MultiEdit,NotebookRead,NotebookEdit,WebFetch,TodoRead,TodoWrite,WebSearch
+./docs/configuration.md:192:- `claude_timeout_seconds = 600` (longer timeout)
+./docs/configuration.md:202:- `claude_timeout_seconds = 30` (faster timeout)
+./docs/configuration.md:212:- `claude_max_cost_per_user = 5.0` (stricter cost limit)
+./docs/configuration.md:286:# No ANTHROPIC_API_KEY needed - SDK will use CLI credentials
+./docs/configuration.md:292:ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+./tests/unit/test_claude/test_parser.py:5:from src.claude.parser import OutputParser, ResponseFormatter
+./tests/unit/test_claude/test_parser.py:64:                            "type": "tool_use",
+./tests/unit/test_claude/test_parser.py:80:                            "type": "tool_use",
+./tests/unit/test_claude/test_parser.py:107:                            "type": "tool_use",
+./tests/unit/test_claude/test_parser.py:132:                        {"type": "tool_use", "name": "sometool"},
+./tests/unit/test_claude/test_parser.py:152:                "tool_use_id": "123",
+./tests/unit/test_claude/test_parser.py:179:                            "type": "tool_use",

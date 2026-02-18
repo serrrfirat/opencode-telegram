@@ -1,0 +1,30 @@
+61d1712 Migrate from Markdown v1 to HTML parse mode (#26)
+dbbd06b Merge pull request #25 from RichardAtCT/docs/agentic-mode-update
+e433bbb Update docs for agentic mode as default interaction model
+8ab153a Add agentic mode with MessageOrchestrator (#22)
+139fa3a Add agentic platform: event bus, webhook API, scheduler, notifications (#21)
+dd9eb89 Merge pull request #20 from RichardAtCT/add-claude-github-actions-1770985637138
+27cf914 "Claude Code Review workflow"
+ed0a3d6 "Claude PR Assistant workflow"
+ffa3164 Merge pull request #7 from michaelansel/fix/continue-command
+0283c6f Add CLAUDE.md for Claude Code guidance
+6676217 Merge pull request #8 from michaelansel/fix/empty-response-fallback
+d0ce16f Merge pull request #9 from michaelansel/fix/ls-markdown-escaping
+4f7eace Merge pull request #10 from michaelansel/fix/error-message-escaping
+c9559d1 Merge pull request #12 from michaelansel/docs/systemd-setup
+cd9642d Merge pull request #17 from kkuehlz/fix/env-list-validators
+4669f89 Merge pull request #19 from RichardAtCT/claude/migrate-agent-sdk-Dm1FR
+00ee57c Migrate from deprecated claude-code-sdk to claude-agent-sdk
+030aa47 Merge pull request #18 from RichardAtCT/claude/diagnose-mcp-issues-KDpVo
+9cc5618 Fix MCP servers never being passed to Claude SDK or CLI subprocess
+803b556 Fix env list validators for single values and missing tools parser
+44a669b Merge pull request #16 from RichardAtCT/claude/maintain-session-context-nPhTV
+75142e5 Update Telegram bot command menu with session behavior descriptions
+4c15455 Update docs to reflect automatic session resumption behavior
+9e62f13 Maintain session context between conversations with auto-resume
+e4684f4 docs: add comprehensive systemd setup guide
+f02066d fix: escape markdown in error messages for Telegram
+9e161bb fix: add fallback for empty response content
+43831dc fix: resolve /continue command errors
+ea7139f fix: escape markdown special characters in /ls command
+57f3897 Merge pull request #3 from RichardAtCT/feature/advanced-features
