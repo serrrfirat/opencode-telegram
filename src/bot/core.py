@@ -85,8 +85,48 @@ class ClaudeCodeBot:
     async def _set_bot_commands(self) -> None:
         """Set bot command menu via orchestrator."""
         commands = await self.orchestrator.get_bot_commands()
-        await self.app.bot.set_my_commands(commands)
+
+        await self._run_with_retries(
+            operation_name="set bot commands",
+            operation=lambda: self.app.bot.set_my_commands(commands),
+        )
+
         logger.info("Bot commands set", commands=[cmd.command for cmd in commands])
+
+    async def _run_with_retries(
+        self,
+        *,
+        operation_name: str,
+        operation: Callable[[], Any],
+        max_attempts: int = 5,
+        initial_delay_seconds: float = 1,
+    ) -> Any:
+        """Run an async operation with exponential backoff retries."""
+        delay = initial_delay_seconds
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                return await operation()
+            except Exception as exc:
+                if attempt >= max_attempts:
+                    logger.error(
+                        "Telegram operation failed after retries",
+                        operation=operation_name,
+                        attempts=max_attempts,
+                        error=str(exc),
+                    )
+                    raise
+
+                logger.warning(
+                    "Telegram operation failed, retrying",
+                    operation=operation_name,
+                    attempt=attempt,
+                    max_attempts=max_attempts,
+                    retry_in_seconds=delay,
+                    error=str(exc),
+                )
+                await asyncio.sleep(delay)
+                delay *= 2
 
     def _register_handlers(self) -> None:
         """Register handlers via orchestrator (mode-aware)."""
@@ -172,11 +212,20 @@ class ClaudeCodeBot:
                 )
             else:
                 # Polling mode - initialize and start polling manually
-                await self.app.initialize()
-                await self.app.start()
-                await self.app.updater.start_polling(
-                    allowed_updates=Update.ALL_TYPES,
-                    drop_pending_updates=True,
+                await self._run_with_retries(
+                    operation_name="telegram app.initialize",
+                    operation=lambda: self.app.initialize(),
+                )
+                await self._run_with_retries(
+                    operation_name="telegram app.start",
+                    operation=lambda: self.app.start(),
+                )
+                await self._run_with_retries(
+                    operation_name="telegram updater.start_polling",
+                    operation=lambda: self.app.updater.start_polling(
+                        allowed_updates=Update.ALL_TYPES,
+                        drop_pending_updates=True,
+                    ),
                 )
 
                 # Keep running until manually stopped
