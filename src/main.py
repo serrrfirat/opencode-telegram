@@ -1,4 +1,4 @@
-"""Main entry point for Claude Code Telegram Bot."""
+"""Main entry point for OpenCode Telegram Bot."""
 
 import argparse
 import asyncio
@@ -11,14 +11,9 @@ from typing import Any, Dict, Optional
 import structlog
 
 from src import __version__
+from src.agent import get_provider_components, normalize_provider
 from src.bot.core import ClaudeCodeBot
-from src.claude import (
-    ClaudeIntegration,
-    ClaudeProcessManager,
-    SessionManager,
-    ToolMonitor,
-)
-from src.claude.sdk_integration import ClaudeSDKManager
+from src.claude import ClaudeIntegration, SessionManager, ToolMonitor
 from src.config.features import FeatureFlags
 from src.config.settings import Settings
 from src.events.bus import EventBus
@@ -78,12 +73,12 @@ def setup_logging(debug: bool = False) -> None:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Claude Code Telegram Bot",
+        description="OpenCode Telegram Bot",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"Claude Code Telegram Bot {__version__}"
+        "--version", action="version", version=f"OpenCode Telegram Bot {__version__}"
     )
 
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
@@ -139,18 +134,21 @@ async def create_application(config: Settings) -> Dict[str, Any]:
     session_manager = SessionManager(config, session_storage)
     tool_monitor = ToolMonitor(config, security_validator)
 
-    # Create Claude manager based on configuration
+    provider = normalize_provider(config.agent_provider)
+    provider_components = get_provider_components(provider)
+
+    # Create provider managers based on configuration
     if config.use_sdk:
-        logger.info("Using Claude Python SDK integration")
-        sdk_manager = ClaudeSDKManager(config)
+        logger.info("Using provider SDK integration", provider=provider.value)
+        sdk_manager = provider_components.sdk_manager_cls(config)
         process_manager = None
     else:
-        logger.info("Using Claude CLI subprocess integration")
-        process_manager = ClaudeProcessManager(config)
+        logger.info("Using provider subprocess integration", provider=provider.value)
+        process_manager = provider_components.process_manager_cls(config)
         sdk_manager = None
 
-    # Create main Claude integration facade
-    claude_integration = ClaudeIntegration(
+    # Create provider facade.
+    agent_integration = provider_components.integration_cls(
         config=config,
         process_manager=process_manager,
         sdk_manager=sdk_manager,
@@ -172,7 +170,7 @@ async def create_application(config: Settings) -> Dict[str, Any]:
     # Agent handler — translates events into Claude executions
     agent_handler = AgentHandler(
         event_bus=event_bus,
-        claude_integration=claude_integration,
+        claude_integration=agent_integration,
         default_working_directory=config.approved_directory,
         default_user_id=config.allowed_users[0] if config.allowed_users else 0,
     )
@@ -184,7 +182,9 @@ async def create_application(config: Settings) -> Dict[str, Any]:
         "security_validator": security_validator,
         "rate_limiter": rate_limiter,
         "audit_logger": audit_logger,
-        "claude_integration": claude_integration,
+        "agent_integration": agent_integration,
+        # Compatibility shim for existing handler wiring and tests.
+        "claude_integration": agent_integration,
         "storage": storage,
         "event_bus": event_bus,
     }
@@ -199,7 +199,9 @@ async def create_application(config: Settings) -> Dict[str, Any]:
 
     return {
         "bot": bot,
-        "claude_integration": claude_integration,
+        "agent_integration": agent_integration,
+        # Compatibility shim for existing runtime consumers.
+        "claude_integration": agent_integration,
         "storage": storage,
         "config": config,
         "features": features,
@@ -234,7 +236,7 @@ async def run_application(app: Dict[str, Any]) -> None:
     signal.signal(signal.SIGTERM, signal_handler)
 
     try:
-        logger.info("Starting Claude Code Telegram Bot")
+        logger.info("Starting OpenCode Telegram Bot")
 
         # Initialize the bot first (creates the Telegram Application)
         await bot.initialize()
@@ -337,7 +339,7 @@ async def main() -> None:
     setup_logging(debug=args.debug)
 
     logger = structlog.get_logger()
-    logger.info("Starting Claude Code Telegram Bot", version=__version__)
+    logger.info("Starting OpenCode Telegram Bot", version=__version__)
 
     try:
         # Load configuration

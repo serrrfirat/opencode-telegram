@@ -1,8 +1,8 @@
 """Application-wide constants."""
 
 # Version info
-APP_NAME = "Claude Code Telegram Bot"
-APP_DESCRIPTION = "Telegram bot for remote Claude Code access"
+APP_NAME = "OpenCode Telegram Bot"
+APP_DESCRIPTION = "Telegram bot for remote OpenCode access"
 
 # Default limits
 DEFAULT_CLAUDE_TIMEOUT_SECONDS = 300

@@ -27,6 +27,26 @@ from src.utils.constants import (
     DEFAULT_SESSION_TIMEOUT_HOURS,
 )
 
+DEFAULT_ALLOWED_TOOLS = [
+    "Read",
+    "Write",
+    "Edit",
+    "Bash",
+    "Glob",
+    "Grep",
+    "LS",
+    "Task",
+    "MultiEdit",
+    "NotebookRead",
+    "NotebookEdit",
+    "WebFetch",
+    "TodoRead",
+    "TodoWrite",
+    "WebSearch",
+]
+
+DEFAULT_DISALLOWED_TOOLS = ["git commit", "git push"]
+
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
@@ -49,7 +69,13 @@ class Settings(BaseSettings):
         None, description="Secret for auth tokens"
     )
 
-    # Claude settings
+    # Agent provider settings
+    agent_provider: str = Field(
+        "opencode",
+        description="Primary agent provider to use (opencode or claude)",
+    )
+
+    # Claude compatibility settings
     claude_binary_path: Optional[str] = Field(
         None, description="Path to Claude CLI binary (deprecated)"
     )
@@ -58,7 +84,9 @@ class Settings(BaseSettings):
     )
     anthropic_api_key: Optional[SecretStr] = Field(
         None,
-        description="Anthropic API key for Claude SDK (optional if logged into Claude CLI)",
+        description=(
+            "Anthropic API key for Claude SDK (optional if logged into Claude CLI)"
+        ),
     )
     claude_model: str = Field(
         "claude-3-5-sonnet-20241022", description="Claude model to use"
@@ -74,28 +102,34 @@ class Settings(BaseSettings):
     )
     use_sdk: bool = Field(True, description="Use Python SDK instead of CLI subprocess")
     claude_allowed_tools: Optional[List[str]] = Field(
-        default=[
-            "Read",
-            "Write",
-            "Edit",
-            "Bash",
-            "Glob",
-            "Grep",
-            "LS",
-            "Task",
-            "MultiEdit",
-            "NotebookRead",
-            "NotebookEdit",
-            "WebFetch",
-            "TodoRead",
-            "TodoWrite",
-            "WebSearch",
-        ],
+        default=DEFAULT_ALLOWED_TOOLS,
         description="List of allowed Claude tools",
     )
     claude_disallowed_tools: Optional[List[str]] = Field(
-        default=["git commit", "git push"],
+        default=DEFAULT_DISALLOWED_TOOLS,
         description="List of explicitly disallowed Claude tools/commands",
+    )
+
+    # OpenCode-native settings (Claude compatibility values are used as shims)
+    opencode_model: str = Field(
+        "opencode/gpt-5-codex", description="OpenCode model identifier"
+    )
+    opencode_max_turns: int = Field(
+        DEFAULT_CLAUDE_MAX_TURNS, description="OpenCode max conversation turns"
+    )
+    opencode_timeout_seconds: int = Field(
+        DEFAULT_CLAUDE_TIMEOUT_SECONDS, description="OpenCode timeout"
+    )
+    opencode_max_cost_per_user: float = Field(
+        DEFAULT_CLAUDE_MAX_COST_PER_USER, description="OpenCode max cost per user"
+    )
+    opencode_allowed_tools: Optional[List[str]] = Field(
+        default=DEFAULT_ALLOWED_TOOLS,
+        description="List of allowed OpenCode tools",
+    )
+    opencode_disallowed_tools: Optional[List[str]] = Field(
+        default=DEFAULT_DISALLOWED_TOOLS,
+        description="List of explicitly disallowed OpenCode tools/commands",
     )
 
     # Rate limiting
@@ -185,7 +219,7 @@ class Settings(BaseSettings):
             return [int(uid) for uid in v]
         return v  # type: ignore[no-any-return]
 
-    @field_validator("claude_allowed_tools", mode="before")
+    @field_validator("claude_allowed_tools", "opencode_allowed_tools", mode="before")
     @classmethod
     def parse_claude_allowed_tools(cls, v: Any) -> Optional[List[str]]:
         """Parse comma-separated tool names."""
@@ -232,7 +266,8 @@ class Settings(BaseSettings):
         if "mcpServers" not in config_data:
             raise ValueError(
                 "MCP config file must contain a 'mcpServers' key. "
-                'Expected format: {"mcpServers": {"server-name": {"command": "...", ...}}}'
+                "Expected format: "
+                '{"mcpServers": {"server-name": {"command": "...", ...}}}'
             )
         if not isinstance(config_data["mcpServers"], dict):
             raise ValueError(
@@ -256,6 +291,37 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_cross_field_dependencies(self) -> "Settings":
         """Validate dependencies between fields."""
+        self.agent_provider = self.agent_provider.strip().lower()
+
+        if self.agent_provider not in {"opencode", "claude"}:
+            self.agent_provider = "opencode"
+
+        # Keep OpenCode and Claude knobs synchronized while legacy paths exist.
+        if self.opencode_max_turns != DEFAULT_CLAUDE_MAX_TURNS:
+            self.claude_max_turns = self.opencode_max_turns
+        else:
+            self.opencode_max_turns = self.claude_max_turns
+
+        if self.opencode_timeout_seconds != DEFAULT_CLAUDE_TIMEOUT_SECONDS:
+            self.claude_timeout_seconds = self.opencode_timeout_seconds
+        else:
+            self.opencode_timeout_seconds = self.claude_timeout_seconds
+
+        if self.opencode_max_cost_per_user != DEFAULT_CLAUDE_MAX_COST_PER_USER:
+            self.claude_max_cost_per_user = self.opencode_max_cost_per_user
+        else:
+            self.opencode_max_cost_per_user = self.claude_max_cost_per_user
+
+        if self.opencode_allowed_tools != DEFAULT_ALLOWED_TOOLS:
+            self.claude_allowed_tools = self.opencode_allowed_tools
+        elif self.claude_allowed_tools:
+            self.opencode_allowed_tools = self.claude_allowed_tools
+
+        if self.opencode_disallowed_tools != DEFAULT_DISALLOWED_TOOLS:
+            self.claude_disallowed_tools = self.opencode_disallowed_tools
+        elif self.claude_disallowed_tools:
+            self.opencode_disallowed_tools = self.claude_disallowed_tools
+
         # Check auth token requirements
         if self.enable_token_auth and not self.auth_token_secret:
             raise ValueError(
