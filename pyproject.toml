@@ -42,6 +42,7 @@ apscheduler = "^3.10"
 [tool.poetry.scripts]
 opencode-telegram-bot = "src.main:run"
 claude-telegram-bot = "src.main:run" # compatibility alias
+opencode-telegram-onboard = "src.onboarding.wizard:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
