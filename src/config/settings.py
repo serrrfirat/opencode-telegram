@@ -112,7 +112,7 @@ class Settings(BaseSettings):
 
     # OpenCode-native settings (Claude compatibility values are used as shims)
     opencode_model: str = Field(
-        "opencode/gpt-5-codex", description="OpenCode model identifier"
+        "openai/gpt-5-codex", description="OpenCode model identifier"
     )
     opencode_max_turns: int = Field(
         DEFAULT_CLAUDE_MAX_TURNS, description="OpenCode max conversation turns"

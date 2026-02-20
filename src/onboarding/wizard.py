@@ -8,7 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
-from typing import Callable
+from typing import Any, Callable, cast
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -54,12 +54,15 @@ def write_env_file(path: Path, env_map: dict[str, str]) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def _telegram_get(token: str, method: str, params: dict[str, str] | None = None) -> dict:
+def _telegram_get(
+    token: str, method: str, params: dict[str, str] | None = None
+) -> dict[str, Any]:
     query = f"?{urlencode(params)}" if params else ""
     url = f"https://api.telegram.org/bot{token}/{method}{query}"
     req = Request(url, method="GET")
     with urlopen(req, timeout=20) as response:  # noqa: S310
-        return json.loads(response.read().decode("utf-8"))
+        payload = json.loads(response.read().decode("utf-8"))
+        return cast(dict[str, Any], payload)
 
 
 def validate_bot_token(token: str) -> tuple[bool, str | None, str | None]:
@@ -97,7 +100,9 @@ def extract_first_sender(payload: dict) -> tuple[int, str] | None:
     return None
 
 
-def wait_for_pairing_sender(token: str, timeout_seconds: int = 120) -> tuple[int, str] | None:
+def wait_for_pairing_sender(
+    token: str, timeout_seconds: int = 120
+) -> tuple[int, str] | None:
     deadline = time.time() + timeout_seconds
     offset: int | None = None
 
@@ -136,12 +141,61 @@ def wait_for_pairing_sender(token: str, timeout_seconds: int = 120) -> tuple[int
 
 def _prompt_manual_ids(input_fn: Callable[[str], str]) -> list[int]:
     while True:
-        users_raw = input_fn("Allowed Telegram user IDs (comma-separated numeric IDs): ").strip()
+        users_raw = input_fn(
+            "Allowed Telegram user IDs (comma-separated numeric IDs): "
+        ).strip()
         try:
             return parse_int_list(users_raw)
         except ValueError as exc:
             print(f"❌ {exc}")
             print("Tip: usernames are not valid here. Use numeric Telegram IDs only.")
+
+
+def _prompt_approved_directory(
+    input_fn: Callable[[str], str], project_root: Path | None = None
+) -> str:
+    """Prompt for filesystem access scope and return approved directory."""
+    project_root = (project_root or Path.cwd()).resolve()
+
+    print("\nFilesystem access")
+    print(
+        "1) Sandboxed (recommended): only the current project directory\n"
+        "2) Host access: full filesystem (/)"
+    )
+    print("3) Custom directory")
+    scope_choice = input_fn("Select [1/2/3] (default 1): ").strip() or "1"
+
+    if scope_choice == "2":
+        warning = (
+            "Host access allows the bot to read and run commands across your "
+            "entire machine. Type HOST to confirm: "
+        )
+        if input_fn(warning).strip() == "HOST":
+            return str(Path("/").resolve())
+
+        print("⚠️ Host access not confirmed. Using sandboxed mode.")
+        return str(project_root)
+
+    if scope_choice == "3":
+        while True:
+            custom_raw = input_fn(f"Approved directory [{project_root}]: ").strip()
+            candidate = Path(custom_raw).expanduser() if custom_raw else project_root
+            candidate = candidate.resolve()
+
+            if not candidate.exists():
+                print("❌ Directory does not exist.")
+                continue
+
+            if not candidate.is_dir():
+                print("❌ Path is not a directory.")
+                continue
+
+            return str(candidate)
+
+    if scope_choice not in {"1", "2", "3"}:
+        print("⚠️ Unknown choice. Using sandboxed mode.")
+
+    return str(project_root)
 
 
 def prompt_answers(input_fn: Callable[[str], str] = input) -> OnboardingAnswers:
@@ -154,7 +208,9 @@ def prompt_answers(input_fn: Callable[[str], str] = input) -> OnboardingAnswers:
         token = input_fn("Telegram bot token: ").strip()
         ok, detected_username, err = validate_bot_token(token)
         if ok:
-            shown = f"@{detected_username}" if detected_username else "(username unknown)"
+            shown = (
+                f"@{detected_username}" if detected_username else "(username unknown)"
+            )
             print(f"✅ Token validated. Bot: {shown}")
             break
         print(f"❌ Token validation failed: {err}")
@@ -168,13 +224,12 @@ def prompt_answers(input_fn: Callable[[str], str] = input) -> OnboardingAnswers:
         username_prompt += f" [{suggested_username}]"
     username = input_fn(username_prompt + ": ").strip() or suggested_username
 
-    default_dir = str(Path.cwd())
-    approved_directory = (
-        input_fn(f"Approved directory [{default_dir}]: ").strip() or default_dir
-    )
+    approved_directory = _prompt_approved_directory(input_fn)
 
     print("\nAccess control")
-    print("1) Pair now (recommended): send a DM to your bot and auto-capture your Telegram ID")
+    print(
+        "1) Pair now (recommended): send a DM to your bot and auto-capture your Telegram ID"
+    )
     print("2) Enter allowed user IDs manually")
     print("3) Skip (dev mode / allow-all fallback)")
     access_choice = input_fn("Select [1/2/3] (default 1): ").strip() or "1"

@@ -1,7 +1,11 @@
-"""OpenCode SDK manager compatibility wrapper."""
+"""OpenCode SDK manager compatibility wrapper.
 
-from src.claude.sdk_integration import ClaudeSDKManager
+OpenCode currently exposes CLI access in this project, so SDK mode reuses the
+OpenCode subprocess manager implementation.
+"""
+
+from .integration import OpenCodeProcessManager
 
 
-class OpenCodeSDKManager(ClaudeSDKManager):
-    """SDK manager for OpenCode provider."""
+class OpenCodeSDKManager(OpenCodeProcessManager):
+    """SDK-mode compatibility manager for OpenCode provider."""

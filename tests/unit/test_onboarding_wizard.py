@@ -4,6 +4,7 @@ import pytest
 
 from src.onboarding.wizard import (
     OnboardingAnswers,
+    _prompt_approved_directory,
     build_env_map,
     extract_first_sender,
     parse_int_list,
@@ -59,3 +60,33 @@ def test_build_env_map_contains_required_fields(tmp_path: Path) -> None:
     assert env_map["ALLOWED_USERS"] == "111,222"
     assert env_map["AGENT_PROVIDER"] == "opencode"
     assert env_map["USE_SDK"] == "true"
+
+
+def test_prompt_approved_directory_defaults_to_sandboxed(tmp_path: Path) -> None:
+    responses = iter([""])
+
+    approved_directory = _prompt_approved_directory(
+        lambda _: next(responses), project_root=tmp_path
+    )
+
+    assert approved_directory == str(tmp_path.resolve())
+
+
+def test_prompt_approved_directory_supports_host_access(tmp_path: Path) -> None:
+    responses = iter(["2", "HOST"])
+
+    approved_directory = _prompt_approved_directory(
+        lambda _: next(responses), project_root=tmp_path
+    )
+
+    assert approved_directory == str(Path("/").resolve())
+
+
+def test_prompt_approved_directory_requires_host_confirmation(tmp_path: Path) -> None:
+    responses = iter(["2", "nope"])
+
+    approved_directory = _prompt_approved_directory(
+        lambda _: next(responses), project_root=tmp_path
+    )
+
+    assert approved_directory == str(tmp_path.resolve())

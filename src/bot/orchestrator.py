@@ -317,7 +317,14 @@ class MessageOrchestrator:
                 FormattedMessage(_format_error_message(str(e)), parse_mode="HTML")
             ]
 
-        await progress_msg.delete()
+        try:
+            await progress_msg.delete()
+        except Exception as e:
+            logger.warning(
+                "Failed to delete progress message",
+                error=str(e),
+                user_id=user_id,
+            )
 
         for i, message in enumerate(formatted_messages):
             try:
@@ -461,7 +468,14 @@ class MessageOrchestrator:
                 claude_response.content
             )
 
-            await progress_msg.delete()
+            try:
+                await progress_msg.delete()
+            except Exception as e:
+                logger.warning(
+                    "Failed to delete document progress message",
+                    error=str(e),
+                    user_id=user_id,
+                )
 
             for i, message in enumerate(formatted_messages):
                 await update.message.reply_text(
@@ -529,7 +543,14 @@ class MessageOrchestrator:
                 claude_response.content
             )
 
-            await progress_msg.delete()
+            try:
+                await progress_msg.delete()
+            except Exception as e:
+                logger.warning(
+                    "Failed to delete photo progress message",
+                    error=str(e),
+                    user_id=user_id,
+                )
 
             for i, message in enumerate(formatted_messages):
                 await update.message.reply_text(
